@@ -14,7 +14,7 @@ class Client(models.Model):
     mdate = models.TimeField(auto_now=True, auto_now_add=False)
     company_id = models.IntegerField(default=1)
     activated = models.BooleanField(default=False)
-    face_id = models.models.IntegerField(
+    face_id = models.IntegerField(
         choices=FACES,
         default=1,
     )
