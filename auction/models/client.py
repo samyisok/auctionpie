@@ -33,8 +33,8 @@ class AbstractClient(AbstractBaseUser):
     REQUIRED_FIELDS = ["email"]
 
     class Meta:
-        verbose_name = _("user")
-        verbose_name_plural = _("users")
+        verbose_name = _("client")
+        verbose_name_plural = _("clients")
         abstract = True
 
     @classmethod
@@ -66,7 +66,7 @@ class AbstractClient(AbstractBaseUser):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
-class Client(models.Model):
+class Client(AbstractClient):
     FACES = [
         (1, u"Физ лицо"),
         (2, u"Юр лицо"),
