@@ -1,8 +1,40 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.utils import timezone
+
+
+class ClientManager(BaseUserManager):
+    def create_user(self, email, password=None):
+        """
+        Creates and saves a User with the given email, date of
+        birth and password.
+        """
+        if not email:
+            raise ValueError("Users must have an email address")
+
+        client = self.model(
+            email=self.normalize_email(email),
+        )
+
+        client.set_password(password)
+        client.save(using=self._db)
+        return client
+
+    @classmethod
+    def normalize_email(cls, email):
+        """
+        Normalize the email address by lowercasing the domain part of it.
+        """
+        email = email or ""
+        try:
+            email_name, domain_part = email.strip().rsplit("@", 1)
+        except ValueError:
+            pass
+        else:
+            email = email_name + "@" + domain_part.lower()
+        return email
 
 
 class AbstractClient(AbstractBaseUser):
@@ -28,6 +60,8 @@ class AbstractClient(AbstractBaseUser):
     )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
+    objects = ClientManager()
+
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["email"]
@@ -37,23 +71,12 @@ class AbstractClient(AbstractBaseUser):
         verbose_name_plural = _("clients")
         abstract = True
 
-    @classmethod
-    def normalize_email(cls, email):
-        """
-        Normalize the email address by lowercasing the domain part of it.
-        """
-        email = email or ""
-        try:
-            email_name, domain_part = email.strip().rsplit("@", 1)
-        except ValueError:
-            pass
-        else:
-            email = email_name + "@" + domain_part.lower()
-        return email
+    def __str__(self):
+        return self.email
 
     def clean(self):
         super().clean()
-        self.email = self.normalize_email(self.email)
+        self.email = self.objects.normalize_email(self.email)
 
     def get_full_name(self):
         return self.email

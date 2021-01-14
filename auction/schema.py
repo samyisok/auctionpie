@@ -2,6 +2,7 @@ import graphene
 
 from .models import Client
 from .types import ClientType
+from .mutations import RegistrationClient
 
 
 class Query(graphene.ObjectType):
@@ -11,4 +12,8 @@ class Query(graphene.ObjectType):
         return Client.objects.all()
 
 
-schema = graphene.Schema(query=Query)
+class Mutation(graphene.ObjectType):
+    registration_client = RegistrationClient.Field()
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
