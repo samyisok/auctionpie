@@ -17,5 +17,5 @@ class Bid(models.Model):
     )
     status = models.CharField(choices=STATUSES, default="active", max_length=32)
     price = models.DecimalField(max_digits=11, decimal_places=2)
-    cdate = models.TimeField(auto_now=False, auto_now_add=True)
-    mdate = models.TimeField(auto_now=True, auto_now_add=False)
+    cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
+    mdate = models.DateTimeField(auto_now=True, auto_now_add=False)

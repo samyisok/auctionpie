@@ -11,8 +11,8 @@ class Client(models.Model):
 
     email = models.CharField(max_length=128, unique=True)
     password = models.CharField(max_length=128)
-    cdate = models.TimeField(auto_now=False, auto_now_add=True)
-    mdate = models.TimeField(auto_now=True, auto_now_add=False)
+    cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
+    mdate = models.DateTimeField(auto_now=True, auto_now_add=False)
     company_id = models.IntegerField(default=1)
     activated = models.BooleanField(default=False)
     face_id = models.IntegerField(

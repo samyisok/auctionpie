@@ -15,5 +15,5 @@ class ClientData(models.Model):
     bik = models.CharField(max_length=50)
     real_address = models.CharField(max_length=50)
     billing_address = models.CharField(max_length=128)
-    cdate = models.TimeField(auto_now=False, auto_now_add=True)
-    mdate = models.TimeField(auto_now=True, auto_now_add=False)
+    cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
+    mdate = models.DateTimeField(auto_now=True, auto_now_add=False)
