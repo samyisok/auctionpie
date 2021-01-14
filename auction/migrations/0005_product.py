@@ -7,23 +7,49 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auction', '0004_auto_20210114_0848'),
+        ("auction", "0004_auto_20210114_0848"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Product',
+            name="Product",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=128)),
-                ('description', models.TextField()),
-                ('start_price', models.FloatField()),
-                ('buy_price', models.FloatField()),
-                ('start_date', models.TimeField()),
-                ('status', models.CharField(choices=[('active', 'Активный'), ('inactive', 'Неактивный'), ('deleted', 'Удаленный'), ('sold', 'Проданный'), ('canceled', 'Отменен')], default='inactive', max_length=64)),
-                ('cdate', models.TimeField(auto_now_add=True)),
-                ('mdate', models.TimeField(auto_now=True)),
-                ('seller', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auction.client')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=128)),
+                ("description", models.TextField()),
+                ("start_price", models.FloatField()),
+                ("buy_price", models.FloatField()),
+                ("start_date", models.TimeField()),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("active", "Активный"),
+                            ("inactive", "Неактивный"),
+                            ("deleted", "Удаленный"),
+                            ("sold", "Проданный"),
+                            ("canceled", "Отменен"),
+                        ],
+                        default="inactive",
+                        max_length=64,
+                    ),
+                ),
+                ("cdate", models.TimeField(auto_now_add=True)),
+                ("mdate", models.TimeField(auto_now=True)),
+                (
+                    "seller",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="auction.client"
+                    ),
+                ),
             ],
         ),
     ]

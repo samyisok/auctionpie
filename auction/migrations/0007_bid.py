@@ -7,20 +7,46 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auction', '0006_product_end_date'),
+        ("auction", "0006_product_end_date"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Bid',
+            name="Bid",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('active', 'Active'), ('deleted', 'Deleted')], default='active', max_length=32)),
-                ('price', models.DecimalField(decimal_places=2, max_digits=11)),
-                ('cdate', models.TimeField(auto_now_add=True)),
-                ('mdate', models.TimeField(auto_now=True)),
-                ('client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auction.client')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auction.product')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[("active", "Active"), ("deleted", "Deleted")],
+                        default="active",
+                        max_length=32,
+                    ),
+                ),
+                ("price", models.DecimalField(decimal_places=2, max_digits=11)),
+                ("cdate", models.TimeField(auto_now_add=True)),
+                ("mdate", models.TimeField(auto_now=True)),
+                (
+                    "client",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="auction.client"
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="auction.product",
+                    ),
+                ),
             ],
         ),
     ]

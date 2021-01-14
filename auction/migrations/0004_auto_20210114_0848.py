@@ -7,19 +7,21 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auction', '0003_auto_20210114_0811'),
+        ("auction", "0003_auto_20210114_0811"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='clientdata',
-            name='cdate',
-            field=models.TimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="clientdata",
+            name="cdate",
+            field=models.TimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='clientdata',
-            name='mdate',
+            model_name="clientdata",
+            name="mdate",
             field=models.TimeField(auto_now=True),
         ),
     ]
