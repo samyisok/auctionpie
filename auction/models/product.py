@@ -20,6 +20,7 @@ class Product(models.Model):
     start_price = models.FloatField(blank=False)
     buy_price = models.FloatField()
     start_date = models.TimeField(auto_now=False, auto_now_add=False)
+    end_date = models.TimeField(auto_now=False, auto_now_add=False)
     status = models.CharField(choices=STATUSES, default="inactive", max_length=64)
     cdate = models.TimeField(auto_now=False, auto_now_add=True)
     mdate = models.TimeField(auto_now=True, auto_now_add=False)
