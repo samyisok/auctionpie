@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Client(models.Model):
     FACES = [
         (1, u"Физ лицо"),
