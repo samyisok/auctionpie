@@ -45,11 +45,6 @@ class AbstractClient(AbstractBaseUser):
     """
 
     email = models.EmailField(_("email address"), blank=True)
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=False,
-        help_text=_("Designates whether the user can log into this admin site."),
-    )
     is_active = models.BooleanField(
         _("active"),
         default=True,
@@ -77,12 +72,6 @@ class AbstractClient(AbstractBaseUser):
     def clean(self):
         super().clean()
         self.email = self.objects.normalize_email(self.email)
-
-    def get_full_name(self):
-        return self.email
-
-    def get_short_name(self):
-        return self.email
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
