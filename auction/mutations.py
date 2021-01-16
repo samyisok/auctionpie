@@ -3,7 +3,7 @@ import graphene
 from .types import ClientType
 from .models import Client
 
-
+# TODO REMOVE
 class RegistrationClient(graphene.Mutation):
     class Arguments:
         email = graphene.String(required=True)
