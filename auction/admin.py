@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-from auction.models import Client, ClientData, Product
+from auction.models import Client, ClientData, Product, Bid
 from django.apps import apps
 
 
@@ -102,6 +102,7 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(Client, UserAdmin)
 admin.site.register(ClientData)
 admin.site.register(Product)
+admin.site.register(Bid)
 
 
 app = apps.get_app_config("graphql_auth")

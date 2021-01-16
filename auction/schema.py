@@ -2,7 +2,7 @@ import graphene
 
 from .models import Client
 from .types import ClientType
-from .mutations import RegistrationClient
+from .mutations import CreateProduct
 from graphql_jwt.decorators import login_required
 
 
@@ -16,7 +16,7 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    registration_client = RegistrationClient.Field()
+    create_product = CreateProduct.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
