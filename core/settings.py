@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "auction",
     "graphene_django",
+    "graphql_auth",
 ]
 
 MIDDLEWARE = [
@@ -53,7 +54,39 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "core.urls"
 
-GRAPHENE = {"SCHEMA": "core.schema.schema"}
+GRAPHENE = {
+    "SCHEMA": "core.schema.schema",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+    ],
+}
+
+GRAPHQL_AUTH = {
+    "LOGIN_ALLOWED_FIELDS": ["email"],
+    "REGISTER_MUTATION_FIELDS": {
+        "email": "String",
+    },
+    "UPDATE_MUTATION_FIELDS": [],
+}
+
+AUTHENTICATION_BACKENDS = [
+    "graphql_auth.backends.GraphQLAuthBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+GRAPHQL_JWT = {
+    "JWT_ALLOW_ANY_CLASSES": [
+        "graphql_auth.mutations.Register",
+        "graphql_auth.mutations.VerifyAccount",
+        "graphql_auth.mutations.ResendActivationEmail",
+        "graphql_auth.mutations.SendPasswordResetEmail",
+        "graphql_auth.mutations.PasswordReset",
+        "graphql_auth.mutations.ObtainJSONWebToken",
+        "graphql_auth.mutations.VerifyToken",
+        "graphql_auth.mutations.RefreshToken",
+        "graphql_auth.mutations.RevokeToken",
+    ],
+}
 
 TEMPLATES = [
     {
@@ -122,3 +155,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
+
+AUTH_USER_MODEL = "auction.Client"
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

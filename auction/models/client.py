@@ -22,6 +22,19 @@ class ClientManager(BaseUserManager):
         client.save(using=self._db)
         return client
 
+    def create_superuser(self, email, password=None):
+        """
+        Creates and saves a superuser with the given email, date of
+        birth and password.
+        """
+        client = self.create_user(
+            email,
+            password=password,
+        )
+        client.is_admin = True
+        client.save(using=self._db)
+        return client
+
     @classmethod
     def normalize_email(cls, email):
         """
@@ -54,12 +67,12 @@ class AbstractClient(AbstractBaseUser):
         ),
     )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    is_admin = models.BooleanField(default=False)
 
     objects = ClientManager()
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["email"]
 
     class Meta:
         verbose_name = _("client")
@@ -71,11 +84,33 @@ class AbstractClient(AbstractBaseUser):
 
     def clean(self):
         super().clean()
-        self.email = self.objects.normalize_email(self.email)
+        self.email = self.__class__.objects.normalize_email(self.email)
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    @property
+    def is_staff(self):
+        "Is the user a member of staff?"
+        # Simplest possible answer: All admins are staff
+        return self.is_admin
+
+    @property
+    def is_superuser(self):
+        "Is the user a member of staff?"
+        # Simplest possible answer: All admins are staff
+        return self.is_admin
 
 
 class Client(AbstractClient):
@@ -91,7 +126,6 @@ class Client(AbstractClient):
     cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
     mdate = models.DateTimeField(auto_now=True, auto_now_add=False)
     company_id = models.IntegerField(default=1)
-    is_confirmed = models.BooleanField(default=False)
     face_id = models.IntegerField(
         choices=FACES,
         default=1,
