@@ -1,6 +1,6 @@
 import graphene
 from graphql import GraphQLError
-from .types import ClientType, ProductType, BidType
+from .types import ProductType, BidType
 from .models import Client
 from .helpers import graphql as graphql_helper
 from graphql_jwt.decorators import login_required

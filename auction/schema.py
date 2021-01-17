@@ -1,9 +1,8 @@
 import graphene
 from django.core.paginator import Paginator
-from .models import Client, Product
-from .types import ClientType, ProductType
+from .models import Product
+from .types import ProductType
 from .mutations import CreateProduct, CreateBid
-from graphql_jwt.decorators import login_required
 
 
 class Query(graphene.ObjectType):
