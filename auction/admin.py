@@ -76,7 +76,6 @@ class UserAdmin(BaseUserAdmin):
                 "fields": (
                     "face_id",
                     "company_id",
-                    "is_confirmed",
                     "last_login",
                     "date_joined",
                 )
