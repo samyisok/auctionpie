@@ -1,5 +1,4 @@
 from graphene_django.types import DjangoObjectType
-from django.contrib.auth.models import User
 from .models import Client, Product, Bid
 
 

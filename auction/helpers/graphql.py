@@ -1,7 +1,7 @@
 """
 Методы для вызова из graphql
 """
-from auction.models import Product
+from auction.models import Product, Bid
 
 
 def create_new_product(
@@ -29,5 +29,14 @@ def cancel_product():
     pass
 
 
-def make_bid():
-    pass
+def create_bid(client, price, product_id):
+    product = Product.objects.get(id=product_id)
+
+    bid = Bid(
+        client=client,
+        price=price,
+        product=product,
+    )
+
+    bid.save
+    return bid
