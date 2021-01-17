@@ -38,5 +38,5 @@ def create_bid(client, price, product_id):
         product=product,
     )
 
-    bid.save
+    bid.save()
     return bid
