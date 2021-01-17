@@ -1,18 +1,20 @@
 import graphene
-
-from .models import Client
-from .types import ClientType
+from django.core.paginator import Paginator
+from .models import Client, Product
+from .types import ClientType, ProductType
 from .mutations import CreateProduct
 from graphql_jwt.decorators import login_required
 
 
 class Query(graphene.ObjectType):
-    clients = graphene.List(ClientType)
+    product_list = graphene.List(
+        ProductType, page=graphene.Int(), page_size=graphene.Int()
+    )
 
-    # TODO remove
-    @login_required
-    def resolve_clients(self, info):
-        return Client.objects.all()
+    def resolve_product_list(self, info, page=1, page_size=10):
+        products = Product.objects.all()
+        paginator = Paginator(products, page_size)
+        return paginator.page(page)
 
 
 class Mutation(graphene.ObjectType):
