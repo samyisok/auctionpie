@@ -4,6 +4,7 @@ from .types import ProductType, BidType
 from .models import Client
 from .helpers import graphql as graphql_helper
 from graphql_jwt.decorators import login_required
+from .structures.graphql import BidInput
 
 
 class CreateProduct(graphene.Mutation):
@@ -62,8 +63,11 @@ class CreateBid(graphene.Mutation):
     @login_required
     def mutate(self, info, price, product_id):
         client = info.context.user
-        if isinstance(client, Client) is not True:
-            raise GraphQLError("Should be client model")
+        bid_input = BidInput(
+            client=client,
+            price=price,
+            product_id=product_id,
+        )
 
-        bid = graphql_helper.create_bid(client, price, product_id)
+        bid = graphql_helper.create_bid(bid_input=bid_input)
         return CreateBid(bid=bid)

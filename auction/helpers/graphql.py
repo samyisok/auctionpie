@@ -2,6 +2,7 @@
 Методы для вызова из graphql
 """
 from auction.models import Product, Bid
+from ..structures.graphql import BidInput
 
 
 def create_new_product(
@@ -29,12 +30,12 @@ def cancel_product():
     pass
 
 
-def create_bid(client, price, product_id):
-    product = Product.objects.get(id=product_id)
+def create_bid(bid_input: BidInput) -> Bid:
+    product = Product.objects.get(id=bid_input.product_id)
 
     bid = Bid(
-        client=client,
-        price=price,
+        client=bid_input.client,
+        price=bid_input.price,
         product=product,
     )
 
