@@ -1,6 +1,6 @@
 from django.db import models
 from auction.models import Client
-import timezone
+from django.utils import timezone
 
 
 class TransactionType(models.TextChoices):
