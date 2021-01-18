@@ -59,8 +59,6 @@ class ProductInput(Structure):
     def check_date(cls, v, values, **kwargs):
         if v is None:
             return v
-        # print(v)
-        print(values["end_date"])
         if v <= values["end_date"]:
             raise ValueError("start_date should be greated than end_date")
         return v
