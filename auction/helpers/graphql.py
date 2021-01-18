@@ -2,7 +2,7 @@
 Методы для вызова из graphql
 """
 from auction.models import Product, Bid
-from ..structures.graphql import BidInput, ProductInput
+from auction.structures.graphql import BidInput, ProductInput
 
 
 def create_new_product(product_input: ProductInput) -> Product:
