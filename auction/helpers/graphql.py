@@ -2,20 +2,18 @@
 Методы для вызова из graphql
 """
 from auction.models import Product, Bid
-from ..structures.graphql import BidInput
+from ..structures.graphql import BidInput, ProductInput
 
 
-def create_new_product(
-    client, name, description, start_price, buy_price, start_date, end_date
-):
+def create_new_product(product_input: ProductInput) -> Product:
     product = Product(
-        seller=client,
-        name=name,
-        description=description,
-        start_price=start_price,
-        buy_price=buy_price,
-        start_date=start_date,
-        end_date=end_date,
+        seller=product_input.seller,
+        name=product_input.name,
+        description=product_input.description,
+        start_price=product_input.start_price,
+        buy_price=product_input.buy_price,
+        start_date=product_input.start_date,
+        end_date=product_input.end_date,
     )
 
     product.save()
