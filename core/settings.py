@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "auction",
     "graphene_django",
     "graphql_auth",
+    "billing",
 ]
 
 MIDDLEWARE = [
