@@ -13,11 +13,11 @@ class Product(models.Model):
     """
 
     STATUSES = [
-        ("active", u"Активный"),
-        ("inactive", u"Неактивный"),
-        ("deleted", u"Удаленный"),
-        ("sold", u"Проданный"),
-        ("canceled", u"Отменен"),
+        ("active", "Активный"),
+        ("inactive", "Неактивный"),
+        ("deleted", "Удаленный"),
+        ("sold", "Проданный"),
+        ("canceled", "Отменен"),
     ]
 
     seller = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -52,7 +52,10 @@ class Product(models.Model):
         where = models.Q(product=self)
 
         final_price = (
-            self.bid_set.filter(where).order_by("-cdate").values("price").first()
+            self.bid_set.filter(where)
+            .order_by("-cdate")
+            .values("price")
+            .first()
         )
 
         if final_price is None:
