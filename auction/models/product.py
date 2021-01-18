@@ -5,6 +5,8 @@ from decimal import Decimal
 
 class Product(models.Model):
     """
+    Товары на аукцион
+
     statuses flow
     inactive->active->sold->canceled
     inactive->active->deleted || inactive->deleted
