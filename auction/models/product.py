@@ -1,11 +1,15 @@
 from django.db import models
 from .client import Client
+from decimal import Decimal
 
 
 class Product(models.Model):
-    # statuses flow
-    # inactive->active->sold->canceled
-    # inactive->active->deleted || inactive->deleted
+    """
+    statuses flow
+    inactive->active->sold->canceled
+    inactive->active->deleted || inactive->deleted
+    """
+
     STATUSES = [
         ("active", u"Активный"),
         ("inactive", u"Неактивный"),
@@ -37,3 +41,19 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_final_bid_price(self) -> Decimal:
+        """
+        Получаем максимальный бид или start_price этого продукта
+        """
+
+        where = models.Q(product=self)
+
+        final_price = (
+            self.bid_set.filter(where).order_by("-cdate").values("price").first()
+        )
+
+        if final_price is None:
+            return self.start_price
+
+        return final_price["price"]

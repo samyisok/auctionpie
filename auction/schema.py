@@ -11,12 +11,13 @@ class Query(graphene.ObjectType):
     )
 
     product = graphene.Field(ProductType, id=graphene.ID(required=True))
+    product_price = graphene.Decimal(id=graphene.ID(required=True))
 
     def resolve_product_list(self, info, page=1, page_size=10):
         """
         получаем список продуктов на аукционе
         """
-        products = Product.objects.all()
+        products = Product.objects.all().order_by("id")
         paginator = Paginator(products, page_size)
         return paginator.page(page)
 
@@ -25,6 +26,14 @@ class Query(graphene.ObjectType):
         получаем конкретный продукт
         """
         return Product.objects.get(id=id)
+
+    def resolve_product_price(self, info, id):
+        """
+        получаем цену продукта
+        """
+        price = Product.objects.get(id=id).get_final_bid_price()
+        print(price)
+        return price
 
 
 class Mutation(graphene.ObjectType):
