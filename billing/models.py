@@ -65,7 +65,7 @@ class Transaction(models.Model):
             raise TransactionException("amount param should be positive")
 
         txn = cls(
-            client=Client,
+            client=client,
             amount=amount,
             tnx_type=TransactionType.DEPOSIT,
             comment=comment,
@@ -89,7 +89,7 @@ class Transaction(models.Model):
             raise TransactionException("amount param should be positive")
         # TODO подумать будем ли уходить в минус или нет при списаниях.
         txn = cls(
-            client=Client,
+            client=client,
             amount=-amount,
             tnx_type=TransactionType.EXPENSE,
             comment=comment,
@@ -116,7 +116,7 @@ class Transaction(models.Model):
             raise TransactionException("not enough amount on balance")
 
         txn = cls(
-            client=Client,
+            client=client,
             amount=-amount,
             tnx_type=TransactionType.WITHDRAW,
             comment=comment,
@@ -140,7 +140,7 @@ class Transaction(models.Model):
             raise TransactionException("amount param should be positive")
 
         txn = cls(
-            client=Client,
+            client=client,
             amount=amount,
             tnx_type=TransactionType.CANCELLATION,
             comment=comment,

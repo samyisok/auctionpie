@@ -1,4 +1,4 @@
-from .client import Client
-from .client_data import ClientData
-from .product import Product
-from .bid import Bid
+from .client import Client  # noqa
+from .client_data import ClientData  # noqa
+from .product import Product  # noqa
+from .bid import Bid  # noqa
