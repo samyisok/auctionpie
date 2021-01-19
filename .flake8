@@ -1,0 +1,7 @@
+
+[flake8]
+
+# Set the maximum length that any line (with some exceptions) may be.
+max-line-length = 100
+# Set the maximum allowed McCabe complexity value for a block of code.
+max-complexity = 10

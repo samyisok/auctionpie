@@ -6,13 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('billing', '0001_initial'),
+        ("billing", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='transaction',
-            name='tnx_type',
-            field=models.CharField(choices=[('deposit', 'Зачисление на аккаунт пользователя'), ('expense', 'Списание за услуги с аккаунта пользователя'), ('withdraw', 'Вывод средств с аккаунта пользователя во вне'), ('cancellation ', 'Пополнение счета, средствами с отмены списания')], max_length=32, verbose_name='Тип транзакции'),
+            model_name="transaction",
+            name="tnx_type",
+            field=models.CharField(
+                choices=[
+                    ("deposit", "Зачисление на аккаунт пользователя"),
+                    ("expense", "Списание за услуги с аккаунта пользователя"),
+                    (
+                        "withdraw",
+                        "Вывод средств с аккаунта пользователя во вне",
+                    ),
+                    (
+                        "cancellation ",
+                        "Пополнение счета, средствами с отмены списания",
+                    ),
+                ],
+                max_length=32,
+                verbose_name="Тип транзакции",
+            ),
         ),
     ]
