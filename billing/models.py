@@ -5,7 +5,7 @@ from django.utils import timezone
 
 class TransactionType(models.TextChoices):
     DEPOSIT = "deposit", "Зачисление на аккаунт пользователя"
-    EXPENSE = "expesne", "Списание за услуги с аккаунта пользователя"
+    EXPENSE = "expense", "Списание за услуги с аккаунта пользователя"
     WITHDRAW = "withdraw", "Вывод средств с аккаунта пользователя во вне"
     CANCELLATION = (
         "cancellation ",
