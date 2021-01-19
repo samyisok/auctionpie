@@ -15,7 +15,7 @@ class TransactionType(models.TextChoices):
     EXPENSE = "expense", "Списание за услуги с аккаунта пользователя"
     WITHDRAW = "withdraw", "Вывод средств с аккаунта пользователя во вне"
     CANCELLATION = (
-        "cancellation ",
+        "cancellation",
         "Пополнение счета, средствами с отмены списания",
     )
 
@@ -46,7 +46,7 @@ class Transaction(models.Model):
         auto_now=True,
         auto_now_add=False,
     )
-    comment = models.CharField("Комментарий", max_length=128)
+    comment = models.CharField("Комментарий", max_length=128, null=True)
 
     def __str__(self):
         return f"#{self.id} {self.tnx_type}: {self.amount}({self.client})"
