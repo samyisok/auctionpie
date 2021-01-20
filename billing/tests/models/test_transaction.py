@@ -117,12 +117,12 @@ class TransactionWithdrawTestCase(TestCase):
 
 
 class TransactionCancellationTestCase(TestCase):
-    """Cancellationt"""
+    """Cancellation"""
 
     def setUp(self):
         self.client = Client.objects.create_user(email, "password")
 
-    def test__success(self):
+    def test_cancelation_success(self):
         """cancellation should be success"""
         tnx = Transaction.cancellation(
             amount=amount, client=self.client, comment="test"
@@ -136,7 +136,7 @@ class TransactionCancellationTestCase(TestCase):
         self.assertEqual(tnx.comment, "test")
         self.assertIsNotNone(tnx2)
 
-    def test_deposit_exception(self):
+    def test_cancellation_exception(self):
         """raise TransactionExceptuon with msg"""
         with self.assertRaisesMessage(
             TransactionException, "amount param should be positive"
@@ -144,3 +144,19 @@ class TransactionCancellationTestCase(TestCase):
             Transaction.cancellation(
                 amount=Decimal("-12.34"), client=self.client, comment="test"
             )
+
+
+class TransactionBalanceTestCase(TestCase):
+    """Balance"""
+
+    def setUp(self):
+        self.client = Client.objects.create_user(email, "password")
+        self.deposit = Transaction.deposit(amount=amount, client=self.client)
+        self.expense = Transaction.expense(
+            amount=amount / 2, client=self.client
+        )
+
+    def test_balance_success(self):
+        balance = Transaction.balance(client=self.client)
+
+        self.assertEqual(balance, amount / 2)
