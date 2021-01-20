@@ -157,6 +157,7 @@ class TransactionBalanceTestCase(TestCase):
         )
 
     def test_balance_success(self):
+        """should get correct balance """
         balance = Transaction.balance(client=self.client)
 
         self.assertEqual(balance, amount / 2)
