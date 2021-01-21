@@ -3,6 +3,7 @@ from auction.models import Client
 from auction.models import Product
 from auction.models.base import ModelAbstract
 from billing.models import Bill, BillType
+from django.conf import settings
 
 
 class Deal(ModelAbstract):
@@ -30,7 +31,7 @@ class Deal(ModelAbstract):
 
     def get_commission(self):
         """По бизнес логике, клиент оплачивает коммиссионные за сервис"""
-        return self.amount * 20 / 100
+        return self.amount * settings.COMMISSION_PART[1] / 100
 
     def get_proceeds(self):
         """Выручка, это цена продажи за вычетом коммиссионных"""
