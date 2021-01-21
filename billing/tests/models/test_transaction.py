@@ -15,23 +15,38 @@ amount = Decimal("12.34")
 vat = 20
 
 
-class TransactionDepositTestCase(TestCase):
-    """Deposit"""
-
-    def setUp(self):
+class PrecreateMixin:
+    def precreate_data(self):
         self.client = Client.objects.create_user(email, "password")
-        self.bill = Bill.objects.create(
+        self.bill_prepay = Bill.objects.create(
             client=self.client,
             bill_type=BillType.PREPAY,
             status=BillStatus.NOT_ACTIVATED,
             amount=amount,
             vat=vat,
         )
+        self.bill_sell = Bill.objects.create(
+            client=self.client,
+            bill_type=BillType.SELL,
+            status=BillStatus.NOT_ACTIVATED,
+            amount=amount / 2,
+            vat=vat,
+        )
+
+
+class TransactionDepositTestCase(TestCase, PrecreateMixin):
+    """Deposit"""
+
+    def setUp(self):
+        self.precreate_data()
 
     def test_str(self):
         """str should be success"""
         tnx = Transaction.deposit(
-            amount=amount, client=self.client, bill=self.bill, comment="test"
+            amount=amount,
+            client=self.client,
+            bill=self.bill_prepay,
+            comment="test",
         )
 
         self.assertEqual(str(tnx), f"#1 deposit: 12.34({email})")
@@ -39,7 +54,10 @@ class TransactionDepositTestCase(TestCase):
     def test_deposit_success(self):
         """deposit should be success"""
         tnx = Transaction.deposit(
-            amount=amount, client=self.client, bill=self.bill, comment="test"
+            amount=amount,
+            client=self.client,
+            bill=self.bill_prepay,
+            comment="test",
         )
 
         tnx2 = Transaction.objects.get(id=tnx.id)
@@ -58,21 +76,24 @@ class TransactionDepositTestCase(TestCase):
             Transaction.deposit(
                 amount=Decimal("-12.34"),
                 client=self.client,
-                bill=self.bill,
+                bill=self.bill_prepay,
                 comment="test",
             )
 
 
-class TransactionExpenseTestCase(TestCase):
+class TransactionExpenseTestCase(TestCase, PrecreateMixin):
     """Expense"""
 
     def setUp(self):
-        self.client = Client.objects.create_user(email, "password")
+        self.precreate_data()
 
     def test_expense_success(self):
         """expense should be success"""
         tnx = Transaction.expense(
-            amount=amount, client=self.client, comment="test"
+            amount=amount,
+            client=self.client,
+            bill=self.bill_sell,
+            comment="test",
         )
 
         tnx2 = Transaction.objects.get(id=tnx.id)
@@ -89,21 +110,29 @@ class TransactionExpenseTestCase(TestCase):
             TransactionException, "amount param should be positive"
         ):
             Transaction.expense(
-                amount=Decimal("-12.34"), client=self.client, comment="test"
+                amount=Decimal("-12.34"),
+                client=self.client,
+                bill=self.bill_sell,
+                comment="test",
             )
 
 
-class TransactionWithdrawTestCase(TestCase):
+class TransactionWithdrawTestCase(TestCase, PrecreateMixin):
     """Withdraw"""
 
     def setUp(self):
-        self.client = Client.objects.create_user(email, "password")
-        self.deposit = Transaction.deposit(amount=amount, client=self.client)
+        self.precreate_data()
+        self.deposit = Transaction.deposit(
+            amount=amount, client=self.client, bill=self.bill_prepay
+        )
 
     def test_withdraw_success(self):
         """withdraw should be success"""
         tnx = Transaction.withdraw(
-            amount=amount, client=self.client, comment="test"
+            amount=amount,
+            client=self.client,
+            bill=self.bill_prepay,
+            comment="test",
         )
 
         tnx2 = Transaction.objects.get(id=tnx.id)
@@ -120,7 +149,10 @@ class TransactionWithdrawTestCase(TestCase):
             TransactionException, "amount param should be positive"
         ):
             Transaction.withdraw(
-                amount=Decimal("-12.34"), client=self.client, comment="test"
+                amount=Decimal("-12.34"),
+                client=self.client,
+                bill=self.bill_prepay,
+                comment="test",
             )
 
     def test_withdraw_exception_if_balance_not_enough(self):
@@ -129,20 +161,26 @@ class TransactionWithdrawTestCase(TestCase):
             TransactionException, "not enough amount on balance"
         ):
             Transaction.withdraw(
-                amount=Decimal("15.00"), client=self.client, comment="test"
+                amount=Decimal("15.00"),
+                client=self.client,
+                bill=self.bill_prepay,
+                comment="test",
             )
 
 
-class TransactionCancellationTestCase(TestCase):
+class TransactionCancellationTestCase(TestCase, PrecreateMixin):
     """Cancellation"""
 
     def setUp(self):
-        self.client = Client.objects.create_user(email, "password")
+        self.precreate_data()
 
     def test_cancelation_success(self):
         """cancellation should be success"""
         tnx = Transaction.cancellation(
-            amount=amount, client=self.client, comment="test"
+            amount=amount,
+            client=self.client,
+            bill=self.bill_sell,
+            comment="test",
         )
 
         tnx2 = Transaction.objects.get(id=tnx.id)
@@ -159,18 +197,24 @@ class TransactionCancellationTestCase(TestCase):
             TransactionException, "amount param should be positive"
         ):
             Transaction.cancellation(
-                amount=Decimal("-12.34"), client=self.client, comment="test"
+                amount=Decimal("-12.34"),
+                client=self.client,
+                bill=self.bill_sell,
+                comment="test",
             )
 
 
-class TransactionBalanceTestCase(TestCase):
+class TransactionBalanceTestCase(TestCase, PrecreateMixin):
     """Balance"""
 
     def setUp(self):
-        self.client = Client.objects.create_user(email, "password")
-        self.deposit = Transaction.deposit(amount=amount, client=self.client)
+        self.precreate_data()
+
+        self.deposit = Transaction.deposit(
+            amount=amount, client=self.client, bill=self.bill_prepay
+        )
         self.expense = Transaction.expense(
-            amount=amount / 2, client=self.client
+            amount=amount / 2, client=self.client, bill=self.bill_sell
         )
 
     def test_balance_success(self):
