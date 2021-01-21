@@ -24,7 +24,7 @@ class Product(models.Model):
     name = models.CharField(max_length=128, blank=False)
     description = models.TextField(blank=False)
     start_price = models.DecimalField(
-        max_digits=11,
+        max_digits=19,
         decimal_places=2,
         blank=False,
     )

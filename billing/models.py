@@ -6,7 +6,7 @@ from django.utils import timezone
 from decimal import Decimal
 
 
-class ModelAbastractDate(models.Model):
+class ModelAbstract(models.Model):
     cdate = models.DateTimeField("Дата создания", default=timezone.now)
     mdate = models.DateTimeField(
         "Дата изменения",
@@ -54,7 +54,7 @@ class BillStatus(models.TextChoices):
     CANCELLED = "cancelled", "Счет отменен"
 
 
-class Bill(ModelAbastractDate):
+class Bill(ModelAbstract):
     """
     Счета
 

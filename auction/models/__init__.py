@@ -3,3 +3,4 @@ from .client_data import ClientData  # noqa
 from .product import Product  # noqa
 from .bid import Bid  # noqa
 from .company import Company  # noqa
+from .deal import Deal, DealBill  # noqa
