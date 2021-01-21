@@ -2,7 +2,7 @@ from django.db import models
 from auction.models import Client
 from auction.models import Product
 from auction.models.base import ModelAbstract
-from billing.models import Bill, BillType, BillStatus
+from billing.models import Bill, BillType
 
 
 class Deal(ModelAbstract):
