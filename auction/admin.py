@@ -82,7 +82,7 @@ class UserAdmin(BaseUserAdmin):
             {
                 "fields": (
                     "face_id",
-                    "company_id",
+                    "company",
                     "last_login",
                     "date_joined",
                 )

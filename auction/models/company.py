@@ -9,3 +9,6 @@ class Company(models.Model):
     is_vat_active = models.BooleanField("Включен НДС")
     cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
     mdate = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+    def __str__(self):
+        return self.name

@@ -1,3 +1,4 @@
 # some business logic conf
 
-COMMISSION_PART = {1: 20}  # percentage for company 1
+DEFAULT_COMPANY = 1
+COMMISSION_PART = {DEFAULT_COMPANY: 10}  # percentage for company 1

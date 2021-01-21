@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.utils import timezone
+from auction.models.company import Company
+from django.conf import settings
 
 
 class ClientManager(BaseUserManager):
@@ -115,17 +117,19 @@ class AbstractClient(AbstractBaseUser):
 
 class Client(AbstractClient):
     FACES = [
-        (1, u"Физ лицо"),
-        (2, u"Юр лицо"),
-        (3, u"ИП"),
-        (4, u"Бюджет"),
+        (1, "Физ лицо"),
+        (2, "Юр лицо"),
+        (3, "ИП"),
+        (4, "Бюджет"),
     ]
 
     email = models.CharField(max_length=128, unique=True)
     password = models.CharField(max_length=128)
     cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
     mdate = models.DateTimeField(auto_now=True, auto_now_add=False)
-    company_id = models.IntegerField(default=1)
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, default=settings.DEFAULT_COMPANY
+    )
     face_id = models.IntegerField(
         choices=FACES,
         default=1,
