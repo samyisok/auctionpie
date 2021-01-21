@@ -31,7 +31,17 @@ class Deal(ModelAbstract):
 
     def get_commission(self):
         """По бизнес логике, клиент оплачивает коммиссионные за сервис"""
-        return self.amount * settings.COMMISSION_PART[1] / 100
+
+        # TODO инжектить отдельно расчет коммиссии в зависимости
+        # от типа пользователя(добавить прем юзеров)
+        return (
+            self.amount
+            * (
+                settings.COMMISSION_PART[self.product.seller.company.id]
+                + self.product.seller.company.vat
+            )
+            / 100
+        )
 
     def get_proceeds(self):
         """Выручка, это цена продажи за вычетом коммиссионных"""
