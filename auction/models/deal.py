@@ -25,6 +25,9 @@ class Deal(ModelAbstract):
     )
     bills = models.ManyToManyField(Bill, through="DealBill")
 
+    def __str__(self):
+        return f"{self.product.name}: {self.amount}"
+
 
 class DealBill(ModelAbstract):
     """связь между сделками и счетами"""
@@ -35,3 +38,6 @@ class DealBill(ModelAbstract):
     bill = models.ForeignKey(
         Bill, verbose_name="Счет", on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return f"{self.deal} - {self.bill}"
