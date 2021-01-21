@@ -1,11 +1,18 @@
 from django.test import TestCase
-from billing.models import Transaction, TransactionException
+from billing.models import (
+    Transaction,
+    TransactionException,
+    Bill,
+    BillType,
+    BillStatus,
+)
 from auction.models import Client
 from decimal import Decimal
 
 
 email = "emailfortest@test.ru"
 amount = Decimal("12.34")
+vat = 20
 
 
 class TransactionDepositTestCase(TestCase):
@@ -13,11 +20,18 @@ class TransactionDepositTestCase(TestCase):
 
     def setUp(self):
         self.client = Client.objects.create_user(email, "password")
+        self.bill = Bill.objects.create(
+            client=self.client,
+            bill_type=BillType.PREPAY,
+            status=BillStatus.NOT_ACTIVATED,
+            amount=amount,
+            vat=vat,
+        )
 
     def test_str(self):
         """str should be success"""
         tnx = Transaction.deposit(
-            amount=amount, client=self.client, comment="test"
+            amount=amount, client=self.client, bill=self.bill, comment="test"
         )
 
         self.assertEqual(str(tnx), f"#1 deposit: 12.34({email})")
@@ -25,7 +39,7 @@ class TransactionDepositTestCase(TestCase):
     def test_deposit_success(self):
         """deposit should be success"""
         tnx = Transaction.deposit(
-            amount=amount, client=self.client, comment="test"
+            amount=amount, client=self.client, bill=self.bill, comment="test"
         )
 
         tnx2 = Transaction.objects.get(id=tnx.id)
@@ -42,7 +56,10 @@ class TransactionDepositTestCase(TestCase):
             TransactionException, "amount param should be positive"
         ):
             Transaction.deposit(
-                amount=Decimal("-12.34"), client=self.client, comment="test"
+                amount=Decimal("-12.34"),
+                client=self.client,
+                bill=self.bill,
+                comment="test",
             )
 
 
