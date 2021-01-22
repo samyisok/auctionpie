@@ -4,6 +4,7 @@ from django.db import models
 from auction.models import Client
 from django.utils import timezone
 from decimal import Decimal
+from billing.strategies import BillStrategyFactory
 
 
 class ModelAbstract(models.Model):
@@ -83,46 +84,8 @@ class Bill(ModelAbstract):
 
     def activate(self):
         """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        method_name = f"create_tnx_{self.bill_type}"
-        tnx = None
-        if hasattr(self, method_name) and callable(
-            method := getattr(self, method_name)
-        ):
-            tnx = method()
-        else:
-            raise BillException("unexpected activation method")
-
-        if not isinstance(tnx, Transaction):
-            raise BillException("transaction was not created")
-
-        self.status = BillStatus.ACTIVATED
-        self.save()
-
-        return self
-
-    def create_tnx_prepay(self):
-        """создания пополнения на баланс"""
-        return Transaction.deposit(
-            client=self.client, bill=self, amount=self.amount
-        )
-
-    def create_tnx_sell(self):
-        """создания списания на баланс"""
-        return Transaction.expense(
-            client=self.client, bill=self, amount=self.amount
-        )
-
-    def create_tnx_commission(self):
-        """создания списания на баланс"""
-        return Transaction.expense(
-            client=self.client, bill=self, amount=self.amount
-        )
-
-    def create_tnx_proceeds(self):
-        """создания пополнения на баланс"""
-        return Transaction.deposit(
-            client=self.client, bill=self, amount=self.amount
-        )
+        strategy = BillStrategyFactory.get_strategy(self)
+        return strategy.activate()
 
 
 class TransactionException(Exception):
