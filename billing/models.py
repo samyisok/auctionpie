@@ -81,6 +81,49 @@ class Bill(ModelAbstract):
     def __str__(self):
         return f"#{self.id} {self.bill_type}: {self.amount}({self.client})({self.status})"
 
+    def activate(self):
+        """ Метод активации счета, в момент активации проводим транзакцию по балансу """
+        method_name = f"create_tnx_{self.bill_type}"
+        tnx = None
+        if hasattr(self, method_name) and callable(
+            method := getattr(self, method_name)
+        ):
+            tnx = method()
+        else:
+            raise BillException("unexpected activation method")
+
+        if not isinstance(tnx, Transaction):
+            raise BillException("transaction was not created")
+
+        self.status = BillStatus.ACTIVATED
+        self.save()
+
+        return self
+
+    def create_tnx_prepay(self):
+        """создания пополнения на баланс"""
+        return Transaction.deposit(
+            client=self.client, bill=self, amount=self.amount
+        )
+
+    def create_tnx_sell(self):
+        """создания списания на баланс"""
+        return Transaction.expense(
+            client=self.client, bill=self, amount=self.amount
+        )
+
+    def create_tnx_commission(self):
+        """создания списания на баланс"""
+        return Transaction.expense(
+            client=self.client, bill=self, amount=self.amount
+        )
+
+    def create_tnx_proceeds(self):
+        """создания пополнения на баланс"""
+        return Transaction.deposit(
+            client=self.client, bill=self, amount=self.amount
+        )
+
 
 class TransactionException(Exception):
     pass
