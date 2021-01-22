@@ -1,10 +1,10 @@
-from billing.models import (
-    Bill,
-    BillType,
-    BillStatus,
-    Transaction,
-    BillException,
-)
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from billing.models import Bill, Transaction
+
+from billing.meta import BillType, BillStatus, BillException
 from typing import Tuple, Optional
 
 
@@ -33,71 +33,74 @@ class BillStrategy:
 
         return self.bill
 
-    def transaction_create_deposit(self) -> Transaction:
-        self.transaction = Transaction.deposit(
-            client=self.bill.client, bill=self.bill, amount=self.bill.amount
-        )
+    def transaction_create(self) -> Transaction:
+        raise NotImplementedError
 
-        if not isinstance(self.transaction, Transaction):
-            raise BillException("transaction was not created")
 
-        return self.transaction
+class BillStrategyDeposit(BillStrategy):
+    def transaction_create(self) -> Transaction:
+        self.transaction = self.bill.create_transaction_deposit()
 
-    def transaction_create_expense(self) -> Transaction:
-        self.transaction = Transaction.expense(
-            client=self.bill.client, bill=self.bill, amount=self.bill.amount
-        )
-
-        if not isinstance(self.transaction, Transaction):
+        if self.transaction is None:
             raise BillException("transaction was not created")
 
         return self.transaction
 
 
-class BillStrategyPrepay(BillStrategy):
+class BillStrategyExpense(BillStrategy):
+    def transaction_create(self) -> Transaction:
+        self.transaction = self.bill.create_transaction_expense()
+
+        if self.transaction is None:
+            raise BillException("transaction was not created")
+
+        return self.transaction
+
+
+class BillStrategyPrepay(BillStrategyDeposit):
     """Стратегия предоплаты"""
 
     bill_type = BillType.PREPAY
 
     def activate(self) -> Bill:
         """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        self.transaction_create_deposit()
+        self.transaction_create()
 
         return self.bill_activate()
 
 
-class BillStrategySell(BillStrategy):
+class BillStrategySell(BillStrategyExpense):
     """Стратегия реализации"""
 
     bill_type = BillType.SELL
 
     def activate(self) -> Bill:
         """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        self.transaction_create_expense()
+        self.transaction_create()
 
         return self.bill_activate()
 
 
-class BillStrategyCommission(BillStrategy):
+class BillStrategyCommission(BillStrategyExpense):
     """Стратегия коммиссионых"""
 
     bill_type = BillType.COMMISSION
 
     def activate(self) -> Bill:
         """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        self.transaction_create_expense()
+        self.transaction_create()
 
         return self.bill_activate()
 
 
-class BillStrategyProceeds(BillStrategy):
+class BillStrategyProceeds(BillStrategyDeposit):
     """Стратегия выручки"""
 
     bill_type = BillType.PROCEEDS
 
     def activate(self) -> Bill:
         """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        self.transaction_create_deposit()
+        self.transaction_create()
 
         return self.bill_activate()
 

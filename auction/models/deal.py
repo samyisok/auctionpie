@@ -2,7 +2,8 @@ from django.db import models
 from auction.models import Client
 from auction.models import Product
 from auction.models.base import ModelAbstract
-from billing.models import Bill, BillType
+from billing.models import Bill
+from billing.meta import BillType
 from django.conf import settings
 
 

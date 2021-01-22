@@ -1,14 +1,8 @@
 from django.test import TestCase
-from billing.models import (
-    Transaction,
-    TransactionException,
-    Bill,
-    BillType,
-    BillStatus,
-)
+from billing.models import Bill, Transaction
 from auction.models import Client
 from decimal import Decimal
-
+from billing.meta import TransactionException, BillType, BillStatus
 
 email = "emailfortest@test.ru"
 amount = Decimal("12.34")
