@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
 from typing import List
+from unittest import mock
 import pprint
 
 
@@ -76,3 +77,10 @@ class ModelDealTestCase(TestCase):
             str(bill_commission),
             "#3 commission: 30.00(seller@test.ru)(not_activated)",
         )
+
+    @mock.patch("auction.models.Deal.create_bills", return_value=None)
+    def test_finalize(self, mock):
+        """ should call create_bills """
+        value = self.deal.finalize()
+        self.assertEqual(value, None)
+        mock.assert_called_once_with()

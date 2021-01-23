@@ -93,7 +93,7 @@ class Deal(ModelAbstract):
 
     def finalize(self):
         """финализируем сделку"""
-        self.create_bills(self)
+        self.create_bills()
         # TODO send email
 
 
