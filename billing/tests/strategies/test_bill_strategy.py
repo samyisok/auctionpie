@@ -8,6 +8,7 @@ from billing.strategies import (
     BillStrategySell,
     BillStrategyCommission,
     BillStrategyProceeds,
+    BillStrategyFactory,
 )
 from auction.models import Client
 from decimal import Decimal
@@ -178,3 +179,30 @@ class BillStrategyProceedsTestCase(TestCase, PrecreateMixin):
             self.strategy.transaction.amount, self.bill_proceeds.amount
         )
         self.assertEqual(bill.status, BillStatus.ACTIVATED)
+
+
+class BillStrategyFactoryTestCase(TestCase, PrecreateMixin):
+    """ Strategy factory """
+
+    def setUp(self):
+        self.precreate_data()
+
+    def test_get_strategy_prepay(self):
+        """ should get correct strategy instance """
+        strategy = BillStrategyFactory.get_strategy(self.bill_prepay)
+        self.assertIsInstance(strategy, BillStrategyPrepay)
+
+    def test_get_strategy_sell(self):
+        """ should get correct strategy instance """
+        strategy = BillStrategyFactory.get_strategy(self.bill_sell)
+        self.assertIsInstance(strategy, BillStrategySell)
+
+    def test_get_strategy_commission(self):
+        """ should get correct strategy instance """
+        strategy = BillStrategyFactory.get_strategy(self.bill_commission)
+        self.assertIsInstance(strategy, BillStrategyCommission)
+
+    def test_get_strategy_proceeds(self):
+        """ should get correct strategy instance """
+        strategy = BillStrategyFactory.get_strategy(self.bill_proceeds)
+        self.assertIsInstance(strategy, BillStrategyProceeds)
