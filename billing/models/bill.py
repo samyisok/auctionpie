@@ -44,21 +44,21 @@ class Bill(ModelAbstract):
     amount = models.DecimalField("Сумма счета", max_digits=19, decimal_places=2)
     vat = models.IntegerField("НДС")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"#{self.id} {self.bill_type}: {self.amount}({self.client})({self.status})"
 
-    def activate(self):
+    def activate(self) -> Bill:
         """ Метод активации счета, в момент активации проводим транзакцию по балансу """
         strategy = BillStrategyFactory.get_strategy(self)
         return strategy.activate()
 
-    def create_transaction_deposit(self):
+    def create_transaction_deposit(self) -> Transaction:
         """ создание пополнение в балансе """
         return Transaction.deposit(
             client=self.client, bill=self, amount=self.amount
         )
 
-    def create_transaction_expense(self):
+    def create_transaction_expense(self) -> Transaction:
         """ создание списание в балансе """
         return Transaction.expense(
             client=self.client, bill=self, amount=self.amount
