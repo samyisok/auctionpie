@@ -5,6 +5,7 @@ from auction.models.base import ModelAbstract
 from billing.models import Bill
 from billing.meta import BillType
 from django.conf import settings
+from typing import List
 
 
 class Deal(ModelAbstract):
@@ -48,7 +49,7 @@ class Deal(ModelAbstract):
         """Выручка, это цена продажи за вычетом коммиссионных"""
         return self.amount - self.get_commission()
 
-    def create_bills(self):
+    def create_bills(self) -> List[Bill]:
         """
         Проведение бизнес транзакций
 
@@ -63,6 +64,7 @@ class Deal(ModelAbstract):
             client=self.buyer,
             bill_type=BillType.SELL,
             amount=self.amount,
+            vat=self.buyer.vat,
         )
 
         DealBill.objects.create(deal=self, bill=bill_sell)
@@ -72,6 +74,7 @@ class Deal(ModelAbstract):
             client=self.product.seller,
             bill_type=BillType.PROCEEDS,
             amount=self.amount,
+            vat=self.buyer.vat,
         )
 
         DealBill.objects.create(deal=self, bill=bill_proceeds)
@@ -81,9 +84,12 @@ class Deal(ModelAbstract):
             client=self.product.seller,
             bill_type=BillType.COMMISSION,
             amount=self.get_commission(),
+            vat=self.buyer.vat,
         )
 
         DealBill.objects.create(deal=self, bill=bill_commission)
+
+        return [bill_sell, bill_proceeds, bill_commission]
 
     def finalize(self):
         """финализируем сделку"""

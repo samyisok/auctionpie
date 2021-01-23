@@ -135,3 +135,7 @@ class Client(AbstractClient):
         default=1,
     )
     last_login = models.DateTimeField(blank=True, null=True)
+
+    @property
+    def vat(self):
+        return self.company.vat
