@@ -118,6 +118,9 @@ category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
+[package.dependencies]
+toml = {version = "*", optional = true, markers = "extra == \"toml\""}
+
 [package.extras]
 toml = ["toml"]
 
@@ -568,7 +571,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "d6f40cc10054a343c4a985982f112f26f770583a2485f1ad85bbc04480a42a19"
+content-hash = "e586527d8a09d18713052c762158bce447d3ff78b7735c28ca9ff476bf6f274a"
 
 [metadata.files]
 aniso8601 = [
