@@ -1,6 +1,20 @@
+from __future__ import annotations
+
 from django.db import models
+from django.apps import apps
 from .client import Client
 from decimal import Decimal
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from auction.models import Bid, Deal
+
+# from auction.models import Deal
+
+
+class ProductException(Exception):
+    pass
 
 
 class Product(models.Model):
@@ -44,21 +58,43 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_final_bid(self) -> Bid:
+        """
+        Получаем максимальный бид
+        """
+
+        where = models.Q(product=self)
+
+        final_bid = self.bid_set.filter(where).order_by("-price").first()
+
+        return final_bid
+
     def get_final_bid_price(self) -> Decimal:
         """
         Получаем максимальный бид или start_price этого продукта
         """
 
-        where = models.Q(product=self)
+        final_bid: Bid = self.get_final_bid()
 
-        final_price = (
-            self.bid_set.filter(where)
-            .order_by("-cdate")
-            .values("price")
-            .first()
-        )
-
-        if final_price is None:
+        if final_bid is None:
             return self.start_price
 
-        return final_price["price"]
+        return final_bid.price
+
+    def make_a_deal(self) -> Deal:
+        """
+        Создание финализируещей сделки
+        """
+        final_bid: Bid = self.get_final_bid()
+
+        if final_bid is None:
+            raise ProductException("can not make a deal without bid and bidder")
+
+        final_price: Decimal = final_bid.price
+
+        deal_model = apps.get_model("auction", "Deal")
+        deal: Deal = deal_model.objects.create(
+            product=self, buyer=final_bid.client, amount=final_price
+        )
+
+        return deal

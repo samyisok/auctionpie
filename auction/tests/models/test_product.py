@@ -1,5 +1,6 @@
 from django.test import TestCase
-from auction.models import Client, Product, Bid
+from auction.models import Client, Product, Bid, Deal
+from auction.models.product import ProductException
 from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
@@ -43,3 +44,47 @@ class ModelsProductGetFinalBidPriceTestCase(TestCase):
 
         final_price = self.product.get_final_bid_price()
         self.assertEqual(final_price, amount + 1)
+
+    def test_get_final_bid(self):
+        """ should return funal bid """
+        Bid.objects.create(
+            client=self.client, product=self.product, price=amount
+        )
+        bid2 = Bid.objects.create(
+            client=self.client, product=self.product, price=amount + 1
+        )
+        Bid.objects.create(
+            client=self.client, product=self.product, price=amount
+        )
+
+        final_bid = self.product.get_final_bid()
+
+        self.assertIsInstance(final_bid, Bid)
+        self.assertEqual(final_bid.id, bid2.id)
+
+    def test_get_final_bid_none(self):
+        """ should do not find final bid """
+        final_bid = self.product.get_final_bid()
+
+        self.assertIsNone(final_bid)
+
+    def test_make_a_deal_exception(self):
+        """ product should raise exception when bid is None """
+        with self.assertRaisesMessage(
+            ProductException, "can not make a deal without bid and bidder"
+        ):
+            self.product.make_a_deal()
+
+    def test_make_a_deal(self):
+        """ should create a deal """
+
+        Bid.objects.create(
+            client=self.client, product=self.product, price=amount
+        )
+
+        deal = self.product.make_a_deal()
+
+        deal_from_db = self.product.deal
+
+        self.assertIsInstance(deal, Deal)
+        self.assertEqual(deal.id, deal_from_db.id)

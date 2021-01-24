@@ -1,6 +1,5 @@
 from django.db import models
 from auction.models import Client
-from auction.models import Product
 from auction.models.base import ModelAbstract
 from billing.models import Bill
 from billing.meta import BillType
@@ -17,8 +16,8 @@ class Deal(ModelAbstract):
 
     """
 
-    product = models.ForeignKey(
-        Product, verbose_name="Товар", on_delete=models.CASCADE
+    product = models.OneToOneField(
+        "auction.Product", verbose_name="Товар", on_delete=models.CASCADE
     )
     buyer = models.ForeignKey(
         Client, verbose_name="Покупатель", on_delete=models.CASCADE
