@@ -17,7 +17,7 @@ class ProductException(Exception):
     pass
 
 
-class Product(models.Model):
+class ProductStatus(models.TextChoices):
     """
     Товары на аукцион
 
@@ -26,13 +26,15 @@ class Product(models.Model):
     inactive->active->deleted || inactive->deleted
     """
 
-    STATUSES = [
-        ("active", "Активный"),
-        ("inactive", "Неактивный"),
-        ("deleted", "Удаленный"),
-        ("sold", "Проданный"),
-        ("canceled", "Отменен"),
-    ]
+    ACTIVE = "active", "Активный"
+    INACTIVE = "inactive", "Не активный"
+    DELETED = "deleted", "Удаленный"
+    SOLD = "sold", "Проданный"  # Завершенный аукцион
+    CANCELED = "canceled", "Отменен"
+
+
+class Product(models.Model):
+    """ Продукты или товары на аукционе """
 
     seller = models.ForeignKey(Client, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, blank=False)
@@ -48,8 +50,8 @@ class Product(models.Model):
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(
-        choices=STATUSES,
-        default="inactive",
+        choices=ProductStatus.choices,
+        default=ProductStatus.INACTIVE,
         max_length=64,
     )
     cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
