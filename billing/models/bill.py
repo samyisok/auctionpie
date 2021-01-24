@@ -5,8 +5,13 @@ from django.utils import timezone
 
 from auction.models import Client
 from billing.meta import BillStatus, BillType
-from billing.models import Transaction
 from billing.strategies import BillStrategyFactory
+from django.apps import apps
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from billing.models import Transaction
 
 
 class ModelAbstract(models.Model):
@@ -55,12 +60,14 @@ class Bill(ModelAbstract):
 
     def create_transaction_deposit(self) -> Transaction:
         """ создание пополнение в балансе """
-        return Transaction.deposit(
+        transaction = apps.get_model("billing", "Transaction")
+        return transaction.deposit(
             client=self.client, bill=self, amount=self.amount
         )
 
     def create_transaction_expense(self) -> Transaction:
         """ создание списание в балансе """
-        return Transaction.expense(
+        transaction = apps.get_model("billing", "Transaction")
+        return transaction.expense(
             client=self.client, bill=self, amount=self.amount
         )

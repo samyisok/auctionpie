@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from billing.models.bill import Bill
+    from billing.models import Bill
 
 from decimal import Decimal
 
