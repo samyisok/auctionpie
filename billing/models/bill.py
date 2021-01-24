@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from django.db import models
-from auction.models import Client
 from django.utils import timezone
-from billing.strategies import BillStrategyFactory
+
+from auction.models import Client
 from billing.meta import BillStatus, BillType
 from billing.models import Transaction
+from billing.strategies import BillStrategyFactory
 
 
 class ModelAbstract(models.Model):

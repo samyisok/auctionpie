@@ -1,18 +1,13 @@
-from django.test import TestCase
-from billing.models import (
-    Bill,
-)
-from billing.meta import BillType, BillStatus
-from billing.strategies import (
-    BillStrategyPrepay,
-    BillStrategySell,
-    BillStrategyCommission,
-    BillStrategyProceeds,
-    BillStrategyFactory,
-)
-from auction.models import Client
 from decimal import Decimal
 
+from django.test import TestCase
+
+from auction.models import Client
+from billing.meta import BillStatus, BillType
+from billing.models import Bill
+from billing.strategies import (BillStrategyCommission, BillStrategyFactory,
+                                BillStrategyPrepay, BillStrategyProceeds,
+                                BillStrategySell)
 
 email = "emailfortest@test.ru"
 amount = Decimal("100.00")

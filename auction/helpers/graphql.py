@@ -1,7 +1,7 @@
 """
 Методы для вызова из graphql
 """
-from auction.models import Product, Bid
+from auction.models import Bid, Product
 from auction.structures.graphql import BidInput, ProductInput
 
 

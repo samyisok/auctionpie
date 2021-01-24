@@ -1,9 +1,10 @@
+import datetime
+from decimal import Decimal
+from typing import Optional, Union
+
 from pydantic import BaseModel, validator
 
-from decimal import Decimal
 from auction.models import Client
-import datetime
-from typing import Union, Optional
 
 
 def _is_positive(

@@ -5,12 +5,13 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from billing.models.bill import Bill
 
+from decimal import Decimal
 
 from django.db import models
-from auction.models import Client
 from django.utils import timezone
-from decimal import Decimal
-from billing.meta import TransactionType, TransactionException
+
+from auction.models import Client
+from billing.meta import TransactionException, TransactionType
 
 
 class Transaction(models.Model):

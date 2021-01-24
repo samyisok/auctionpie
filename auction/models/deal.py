@@ -1,10 +1,12 @@
+from typing import List
+
+from django.conf import settings
 from django.db import models
+
 from auction.models import Client
 from auction.models.base import ModelAbstract
-from billing.models import Bill
 from billing.meta import BillType
-from django.conf import settings
-from typing import List
+from billing.models import Bill
 
 
 class Deal(ModelAbstract):

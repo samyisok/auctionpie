@@ -1,5 +1,6 @@
 from graphene_django.types import DjangoObjectType
-from .models import Client, Product, Bid
+
+from .models import Bid, Client, Product
 
 
 class ClientType(DjangoObjectType):

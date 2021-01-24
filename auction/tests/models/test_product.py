@@ -1,10 +1,11 @@
-from django.test import TestCase
-from auction.models import Client, Product, Bid, Deal
-from auction.models.product import ProductException
-from decimal import Decimal
-from django.utils import timezone
 from datetime import timedelta
+from decimal import Decimal
 
+from django.test import TestCase
+from django.utils import timezone
+
+from auction.models import Bid, Client, Deal, Product
+from auction.models.product import ProductException
 
 email = "emailfortest@test.ru"
 email_seller = "seller@test.ru"

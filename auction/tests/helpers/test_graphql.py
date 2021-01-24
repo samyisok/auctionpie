@@ -1,11 +1,12 @@
-from django.test import TestCase
-from auction.models import Client, Product, Bid
-from decimal import Decimal
-from auction.helpers import graphql as graphql_helper
-from auction.structures.graphql import BidInput, ProductInput
-from django.utils import timezone
 from datetime import timedelta
+from decimal import Decimal
 
+from django.test import TestCase
+from django.utils import timezone
+
+from auction.helpers import graphql as graphql_helper
+from auction.models import Bid, Client, Product
+from auction.structures.graphql import BidInput, ProductInput
 
 email = "emailfortest@test.ru"
 email_seller = "seller@test.ru"

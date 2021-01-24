@@ -1,11 +1,13 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from billing.models import Bill, Transaction
 
-from billing.meta import BillType, BillStatus, BillException
-from typing import Tuple, Optional
+from typing import Optional, Tuple
+
+from billing.meta import BillException, BillStatus, BillType
 
 
 class BillStrategy:

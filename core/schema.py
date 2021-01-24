@@ -1,7 +1,8 @@
 import graphene
-from auction.schema import schema as auction_schema
-from graphql_auth.schema import MeQuery
 from graphql_auth import mutations
+from graphql_auth.schema import MeQuery
+
+from auction.schema import schema as auction_schema
 
 
 class AuthMutation(graphene.ObjectType):

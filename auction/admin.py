@@ -1,18 +1,12 @@
 from django import forms
+from django.apps import apps
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
-from auction.models import (
-    Client,
-    ClientData,
-    Product,
-    Bid,
-    Deal,
-    DealBill,
-    Company,
-)
-from django.apps import apps
+
+from auction.models import (Bid, Client, ClientData, Company, Deal, DealBill,
+                            Product)
 
 
 class UserCreationForm(forms.ModelForm):

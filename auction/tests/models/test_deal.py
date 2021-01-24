@@ -1,12 +1,13 @@
-from django.test import TestCase
-from auction.models import Client, Product, Deal
-from billing.models import Bill
-from decimal import Decimal
-from django.utils import timezone
 from datetime import timedelta
+from decimal import Decimal
 from typing import List
 from unittest import mock
 
+from django.test import TestCase
+from django.utils import timezone
+
+from auction.models import Client, Deal, Product
+from billing.models import Bill
 
 email_buyer = "buyer@test.ru"
 email_seller = "seller@test.ru"

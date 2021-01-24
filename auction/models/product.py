@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from django.db import models
-from django.apps import apps
-from .client import Client
 from decimal import Decimal
-
 from typing import TYPE_CHECKING
+
+from django.apps import apps
+from django.db import models
+
+from .client import Client
 
 if TYPE_CHECKING:
     from auction.models import Bid, Deal
