@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+from django.apps import apps
 from django.db import models
 from django.utils import timezone
 
 from auction.models import Client
 from billing.meta import BillStatus, BillType
 from billing.strategies import BillStrategyFactory
-from django.apps import apps
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from billing.models import Transaction
