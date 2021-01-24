@@ -6,7 +6,6 @@ from django.utils import timezone
 from datetime import timedelta
 from typing import List
 from unittest import mock
-import pprint
 
 
 email_buyer = "buyer@test.ru"
