@@ -4,6 +4,8 @@ from django.conf import settings
 from django.db import models
 
 from auction.models import Client
+
+
 from auction.models.base import ModelAbstract
 from billing.meta import BillType
 from billing.models import Bill
