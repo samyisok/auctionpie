@@ -1,17 +1,20 @@
 from __future__ import annotations
 
+import logging
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from django.apps import apps
 from django.db import models
+from django.utils import timezone
 
 from .client import Client
 
 if TYPE_CHECKING:
     from auction.models import Bid, Deal
 
-# from auction.models import Deal
+
+logger = logging.getLogger(__name__)
 
 
 class ProductException(Exception):
@@ -101,3 +104,52 @@ class Product(models.Model):
         )
 
         return deal
+
+    def is_buy_condition_meet(self) -> bool:
+        """
+        проверяем условия закрытия сделки по цене.
+        если покупная цена не указанна то возвращаем False
+        если цена ставки польше покупной цены возвращаем True
+        """
+
+        if self.buy_price is None:
+            return False
+
+        final_price: Decimal = self.get_final_bid_price()
+        buy_price: Decimal = self.buy_price
+
+        return final_price >= buy_price
+
+    def is_time_condition_meet(self) -> bool:
+        """
+        проверяем условия закрытия сделки по времени.
+        чтобы закрыть сделку, текущее время должно больше end_date
+        """
+        if self.end_date is None:
+            return False
+
+        return self.end_date <= timezone.now()
+
+    def is_ready_to_make_a_deal(self) -> bool:
+        """
+        проверяем множественные условия закрытия сделки.
+        """
+        # неактивные продукты не можем закрывать.
+        if self.status is not ProductStatus.ACTIVE:
+            return False
+
+        # без end_date не должно быть вообще активных сделок
+        if self.end_date is None:
+            raise ProductException("incorrect product")
+
+        return self.is_buy_condition_meet() or self.is_time_condition_meet()
+
+    def bid_posthook(self) -> None:
+        """
+        Метод который дергаем из Bid про создании инстанса bid
+        """
+        logger.info(f"attemp make a deal for {self}")
+
+        if self.is_ready_to_make_a_deal():
+            deal: Deal = self.make_a_deal()
+            logger.info(f"make a deal {deal}")
