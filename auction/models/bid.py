@@ -4,11 +4,13 @@ from .client import Client
 from .product import Product
 
 
+class BidStatus(models.TextChoices):
+    ACTIVE = "active", "Активная ставка"
+    DELETED = "deleted", "Удаленная ставка"
+
+
 class Bid(models.Model):
-    STATUSES = [
-        ("active", "Active"),
-        ("deleted", "Deleted"),
-    ]
+    """ Ставки на товары """
 
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, blank=False, null=False
@@ -17,8 +19,8 @@ class Bid(models.Model):
         Product, on_delete=models.CASCADE, blank=False, null=False
     )
     status = models.CharField(
-        choices=STATUSES,
-        default="active",
+        choices=BidStatus.choices,
+        default=BidStatus.ACTIVE,
         max_length=32,
     )
     price = models.DecimalField(max_digits=19, decimal_places=2)
