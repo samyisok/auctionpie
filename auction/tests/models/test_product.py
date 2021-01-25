@@ -54,9 +54,6 @@ class ModelsProductGetFinalBidPriceTestCase(TestCase):
         bid2 = Bid.objects.create(
             client=self.client, product=self.product, price=amount + 1
         )
-        Bid.objects.create(
-            client=self.client, product=self.product, price=amount
-        )
 
         final_bid = self.product.get_final_bid()
 

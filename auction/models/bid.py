@@ -1,7 +1,13 @@
+from decimal import Decimal
+
 from django.db import models
 
 from .client import Client
 from .product import Product
+
+
+class BidException(Exception):
+    pass
 
 
 class BidStatus(models.TextChoices):
@@ -29,3 +35,23 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.product.name}: {self.price}"
+
+    @classmethod
+    def is_possible_to_place_bid(cls, product: Product, price: Decimal) -> bool:
+        """ Проверки возможности установки ставки перед сохранением """
+
+        where = models.Q(product=product, price__gte=price)
+
+        bid = cls.objects.filter(where).first()
+
+        return bid is None
+
+    def save(self, *args, **kwargs):
+        """ проверки перед сохранение ставки """
+
+        if not Bid.is_possible_to_place_bid(
+            product=self.product, price=self.price
+        ):
+            raise BidException("already have higher bid")
+
+        return super().save(*args, **kwargs)
