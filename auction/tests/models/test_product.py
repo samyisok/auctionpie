@@ -1,11 +1,13 @@
 from datetime import timedelta
 from decimal import Decimal
+from typing import Dict
 
 from django.test import TestCase
 from django.utils import timezone
+from unittest import mock
 
 from auction.models import Bid, Client, Deal, Product
-from auction.models.product import ProductException
+from auction.models.product import ProductException, ProductStatus
 
 email = "emailfortest@test.ru"
 email_seller = "seller@test.ru"
@@ -20,14 +22,16 @@ product_params = {
 }
 
 
-class ModelsProductGetFinalBidPriceTestCase(TestCase):
-    """get final bid price"""
+class ModelsProductTestCase(TestCase):
+    """product model test"""
 
     def setUp(self):
-        self.client = Client.objects.create_user(email, "password")
-        self.seller = Client.objects.create_user(email_seller, "password")
-        self.product_params = {"seller": self.seller, **product_params}
-        self.product = Product.objects.create(**self.product_params)
+        self.client: Client = Client.objects.create_user(email, "password")
+        self.seller: Client = Client.objects.create_user(
+            email_seller, "password"
+        )
+        self.product_params: Dict = {"seller": self.seller, **product_params}
+        self.product: Product = Product.objects.create(**self.product_params)
 
     def test_get_final_bid_price_should_return_start_price(self):
         """should return start price"""
@@ -86,3 +90,114 @@ class ModelsProductGetFinalBidPriceTestCase(TestCase):
 
         self.assertIsInstance(deal, Deal)
         self.assertEqual(deal.id, deal_from_db.id)
+
+    def test_is_buy_condition_meet_true(self):
+        """ should return true """
+        Bid.objects.create(
+            client=self.client, product=self.product, price=Decimal(20)
+        )
+        self.assertTrue(self.product.is_buy_condition_meet())
+
+    def test_is_buy_condition_meet_false(self):
+        """ should return false """
+        Bid.objects.create(
+            client=self.client, product=self.product, price=Decimal(15)
+        )
+        self.assertFalse(self.product.is_buy_condition_meet())
+
+    def test_is_buy_condition_meet_false_buy_price_none(self):
+        """ should return false if buy_price is not defined """
+        self.product.id = None
+        self.product.buy_price = None
+        self.product.save()
+        Bid.objects.create(
+            client=self.client, product=self.product, price=Decimal(20)
+        )
+
+        self.assertFalse(self.product.is_buy_condition_meet())
+
+    def test_is_time_condition_meet_true(self):
+        """ should return true """
+        self.product.end_date = timezone.now()
+        self.product.save()
+        self.assertTrue(self.product.is_time_condition_meet())
+
+        self.product.end_date = timezone.now() - timedelta(1)
+        self.product.save()
+        self.assertTrue(self.product.is_time_condition_meet())
+
+    def test_is_time_condition_meet_false(self):
+        """ should return false """
+        self.product.end_date = timezone.now() + timedelta(1)
+        self.product.save()
+        self.assertFalse(self.product.is_time_condition_meet())
+
+    def test_is_time_condition_meet_false_end_date(self):
+        """ should return false if end date not defined """
+        self.product.end_date = None
+        self.product.save()
+        self.assertFalse(self.product.is_time_condition_meet())
+
+    def test_is_ready_to_make_a_deal_status_false(self):
+        """ should return false if status not Actve """
+        self.assertFalse(self.product.is_ready_to_make_a_deal())
+
+    @mock.patch("auction.models.Product.get_final_bid", return_value=None)
+    def test_is_ready_to_make_a_deal_not_bidded_false(self, mock_get_final_bid):
+        """ should return false if product not have any bids """
+        self.product.status = ProductStatus.ACTIVE
+        self.product.save()
+        self.assertFalse(self.product.is_ready_to_make_a_deal())
+        mock_get_final_bid.assert_called_once_with()
+
+    def test_is_ready_to_make_a_deal_raise_exception(self):
+        """ should return raise exception if end_date not defined """
+        self.product.end_date = None
+        self.product.status = ProductStatus.ACTIVE
+        self.product.save()
+        Bid.objects.create(
+            client=self.client, product=self.product, price=Decimal(20)
+        )
+
+        with self.assertRaisesMessage(ProductException, "invalid product"):
+            self.product.is_ready_to_make_a_deal()
+
+    @mock.patch(
+        "auction.models.Product.is_buy_condition_meet", return_value=False
+    )
+    @mock.patch(
+        "auction.models.Product.is_time_condition_meet", return_value=True
+    )
+    def test_is_ready_to_make_a_deal_call_buy_condition(
+        self, mock_time_cond, mock_buy_cond
+    ):
+        """ should call is_buy_condition_meet """
+        self.product.status = ProductStatus.ACTIVE
+        self.product.save()
+        Bid.objects.create(
+            client=self.client, product=self.product, price=Decimal(20)
+        )
+
+        self.assertTrue(self.product.is_ready_to_make_a_deal())
+        mock_buy_cond.assert_called_once_with()
+        mock_time_cond.assert_called_once_with()
+
+    @mock.patch(
+        "auction.models.Product.is_buy_condition_meet", return_value=True
+    )
+    @mock.patch(
+        "auction.models.Product.is_time_condition_meet", return_value=False
+    )
+    def test_is_ready_to_make_a_deal_call_time_condition(
+        self, mock_time_condition, mock_buy_condition
+    ):
+        """ should call is_buy_condition_meet """
+        self.product.status = ProductStatus.ACTIVE
+        self.product.save()
+        Bid.objects.create(
+            client=self.client, product=self.product, price=Decimal(20)
+        )
+
+        self.assertTrue(self.product.is_ready_to_make_a_deal())
+        mock_buy_condition.assert_called_once_with()
+        mock_time_condition.assert_not_called()

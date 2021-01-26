@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from django.apps import apps
 from django.db import models
@@ -64,7 +64,7 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    def get_final_bid(self) -> Bid:
+    def get_final_bid(self) -> Optional[Bid]:
         """
         Получаем максимальный бид
         """
@@ -80,7 +80,7 @@ class Product(models.Model):
         Получаем максимальный бид или start_price этого продукта
         """
 
-        final_bid: Bid = self.get_final_bid()
+        final_bid: Optional[Bid] = self.get_final_bid()
 
         if final_bid is None:
             return self.start_price
@@ -91,7 +91,7 @@ class Product(models.Model):
         """
         Создание финализируещей сделки
         """
-        final_bid: Bid = self.get_final_bid()
+        final_bid: Optional[Bid] = self.get_final_bid()
 
         if final_bid is None:
             raise ProductException("can not make a deal without bid and bidder")
@@ -138,9 +138,13 @@ class Product(models.Model):
         if self.status is not ProductStatus.ACTIVE:
             return False
 
+        # должна быть хоть одна ставка
+        if self.get_final_bid() is None:
+            return False
+
         # без end_date не должно быть вообще активных сделок
         if self.end_date is None:
-            raise ProductException("incorrect product")
+            raise ProductException("invalid product")
 
         return self.is_buy_condition_meet() or self.is_time_condition_meet()
 
