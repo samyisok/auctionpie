@@ -38,4 +38,5 @@ def create_bid(bid_input: BidInput) -> Bid:
     )
 
     bid.save()
+    bid.post_save()
     return bid

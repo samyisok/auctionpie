@@ -1,5 +1,6 @@
 from datetime import timedelta
 from decimal import Decimal
+from unittest import mock
 
 from django.test import TestCase
 from django.utils import timezone
@@ -30,7 +31,8 @@ class HelperGraphqlCreateBidTestCase(TestCase):
         self.product_params = {"seller": self.seller, **product_params}
         self.product = Product.objects.create(**self.product_params)
 
-    def test_create_bid_success(self):
+    @mock.patch("auction.models.Bid.post_save", return_value=True)
+    def test_create_bid_success(self, mock_post_save):
         "should be success"
         bid_input = BidInput(
             client=self.client, price=amount, product_id=self.product.id
@@ -41,6 +43,7 @@ class HelperGraphqlCreateBidTestCase(TestCase):
         self.assertIsNotNone(bid)
         self.assertIsInstance(bid, Bid)
         self.assertEqual(bid.price, amount)
+        mock_post_save.assert_called_once_with()
 
 
 class HelperGraphqlCreateProductTestCase(TestCase):

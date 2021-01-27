@@ -1,9 +1,12 @@
+import logging
 from decimal import Decimal
 
 from django.db import models
 
 from .client import Client
 from .product import Product
+
+logger = logging.getLogger(__name__)
 
 
 class BidException(Exception):
@@ -49,12 +52,20 @@ class Bid(models.Model):
 
         return bid is None
 
-    def save(self, *args, **kwargs):
-        """ проверки перед сохранение ставки """
-
+    def clean(self):
         if not Bid.is_possible_to_place_bid(
             product=self.product, price=self.price
         ):
             raise BidException("already have higher bid")
 
+    def save(self, *args, **kwargs):
+        """ проверки перед сохранением ставки """
+        self.full_clean()
         return super().save(*args, **kwargs)
+
+    def post_save(self):
+        """ будем вызывать из хелпера отдельно """
+        try:
+            self.product.bid_posthook()
+        except Exception as e:
+            logger.warn(f"failed posthook: {e}")

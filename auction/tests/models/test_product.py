@@ -1,10 +1,10 @@
 from datetime import timedelta
 from decimal import Decimal
 from typing import Dict
+from unittest import mock
 
 from django.test import TestCase
 from django.utils import timezone
-from unittest import mock
 
 from auction.models import Bid, Client, Deal, Product
 from auction.models.product import ProductException, ProductStatus

@@ -1,5 +1,6 @@
 from datetime import timedelta
 from decimal import Decimal
+from unittest import mock
 
 from django.test import TestCase
 from django.utils import timezone
@@ -81,3 +82,9 @@ class ModelsBidTestCase(TestCase):
             Bid.objects.create(
                 client=self.client, product=self.product, price=amount
             )
+
+    @mock.patch("auction.models.Product.bid_posthook", return_value=True)
+    def test_post_save(self, mock_bid_posthook):
+        """ should call bid posthook from product """
+        self.first_bid.post_save()
+        mock_bid_posthook.assert_called_once_with()
