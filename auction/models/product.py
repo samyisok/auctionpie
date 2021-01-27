@@ -150,7 +150,7 @@ class Product(models.Model):
 
     def bid_posthook(self) -> None:
         """
-        Метод который дергаем из Bid про создании инстанса bid
+        Метод который дергаем из Bid после создании инстанса bid
         """
         logger.info(f"attemp make a deal for {self}")
 

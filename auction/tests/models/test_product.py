@@ -201,3 +201,26 @@ class ModelsProductTestCase(TestCase):
         self.assertTrue(self.product.is_ready_to_make_a_deal())
         mock_buy_condition.assert_called_once_with()
         mock_time_condition.assert_not_called()
+
+    @mock.patch(
+        "auction.models.Product.is_ready_to_make_a_deal", return_value=True
+    )
+    @mock.patch(
+        "auction.models.Product.make_a_deal",
+    )
+    def test_bid_posthook(self, mock_a_deal, mock_is_ready):
+        """ should call make_a_deal """
+        deal = mock.Mock(spec=Deal)
+        mock_a_deal.return_value = deal
+
+        log_msg1 = (
+            f"INFO:auction.models.product:attemp make a deal for {self.product}"
+        )
+        log_msg2 = f"INFO:auction.models.product:make a deal {deal}"
+
+        with self.assertLogs(
+            "auction.models.product", level="INFO"
+        ) as mock_log:
+            self.product.bid_posthook()
+            mock_is_ready.assert_called_once_with()
+            self.assertEqual(mock_log.output, [log_msg1, log_msg2])
