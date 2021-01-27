@@ -33,6 +33,9 @@ class Bid(models.Model):
     cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
     mdate = models.DateTimeField(auto_now=True, auto_now_add=False)
 
+    class Meta:
+        indexes = [models.Index(fields=["price"])]
+
     def __str__(self):
         return f"{self.product.name}: {self.price}"
 
