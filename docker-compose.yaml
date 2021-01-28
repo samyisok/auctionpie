@@ -1,0 +1,58 @@
+
+version: '3.1'
+
+volumes:
+  pgdb-auctionpie:
+
+networks:
+  auctionpie-net:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    networks:
+      - auctionpie-net
+    env_file:
+      - ./env.postgres.local
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - pgdb-auctionpie:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    networks:
+      - auctionpie-net
+    ports:
+      - 127.0.0.1:8080:8080
+
+  redis:
+    image: redis
+    restart: always
+    container_name: redis
+    networks:
+      - auctionpie-net
+
+  django:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: django
+    container_name: django
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./env.django.local
+      - ./env.postgres.local
+    ports:
+      - "8000:8000"
+    command: /start
