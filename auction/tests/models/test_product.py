@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import Dict
 from unittest import mock
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -150,18 +151,6 @@ class ModelsProductTestCase(TestCase):
         self.assertFalse(self.product.is_ready_to_make_a_deal())
         mock_get_final_bid.assert_called_once_with()
 
-    def test_is_ready_to_make_a_deal_raise_exception(self):
-        """ should return raise exception if end_date not defined """
-        self.product.end_date = None
-        self.product.status = ProductStatus.ACTIVE
-        self.product.save()
-        Bid.objects.create(
-            client=self.client, product=self.product, price=Decimal(20)
-        )
-
-        with self.assertRaisesMessage(ProductException, "invalid product"):
-            self.product.is_ready_to_make_a_deal()
-
     @mock.patch(
         "auction.models.Product.is_buy_condition_meet", return_value=False
     )
@@ -224,3 +213,30 @@ class ModelsProductTestCase(TestCase):
             self.product.bid_posthook()
             mock_is_ready.assert_called_once_with()
             self.assertEqual(mock_log.output, [log_msg1, log_msg2])
+
+    def test_clean_raise_exception_active(self):
+        """ should return raise exception if end_date not defined """
+
+        list_of_statuses = [
+            ProductStatus.ACTIVE,
+            ProductStatus.SOLD,
+            ProductStatus.CANCELED,
+        ]
+
+        for status in list_of_statuses:
+            self.product.end_date = None
+            self.product.status = status
+
+            with self.assertRaisesMessage(
+                ValidationError, "start_date and end_date should be defined"
+            ):
+                self.product.clean()
+
+    @mock.patch(
+        "auction.models.Product.full_clean",
+    )
+    def test_save(self, mock_full_clean):
+        """ should call full_clean """
+        self.product.id = None
+        self.product.save()
+        mock_full_clean.assert_called_once_with()

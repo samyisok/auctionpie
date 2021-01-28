@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
 from django.apps import apps
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -63,6 +64,27 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        """ валидация полей """
+
+        active_statuses = [
+            ProductStatus.ACTIVE,
+            ProductStatus.SOLD,
+            ProductStatus.CANCELED,
+        ]
+
+        if self.status in active_statuses and (
+            self.start_date is None or self.end_date is None
+        ):
+            raise ValidationError("start_date and end_date should be defined")
+
+        return super().clean()
+
+    def save(self, *args, **kwargs):
+        """ проверки перед сохранением товара"""
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     def get_final_bid(self) -> Optional[Bid]:
         """
@@ -141,10 +163,6 @@ class Product(models.Model):
         # должна быть хоть одна ставка
         if self.get_final_bid() is None:
             return False
-
-        # без end_date не должно быть вообще активных сделок
-        if self.end_date is None:
-            raise ProductException("invalid product")
 
         return self.is_buy_condition_meet() or self.is_time_condition_meet()
 

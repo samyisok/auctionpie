@@ -53,6 +53,7 @@ class Bid(models.Model):
         return bid is None
 
     def clean(self):
+        super().clean()
         if not Bid.is_possible_to_place_bid(
             product=self.product, price=self.price
         ):
