@@ -68,7 +68,7 @@ class Deal(ModelAbstract):
             vat=self.buyer.vat,
         )
 
-        DealBill.objects.create(deal=self, bill=bill_sell)
+        self.bills.add(bill_sell)
 
         # второй счет - начисление продавцу
         bill_proceeds = Bill.objects.create(
@@ -78,7 +78,7 @@ class Deal(ModelAbstract):
             vat=self.buyer.vat,
         )
 
-        DealBill.objects.create(deal=self, bill=bill_proceeds)
+        self.bills.add(bill_proceeds)
 
         # третий счет - списание коммиссионых
         bill_commission = Bill.objects.create(
@@ -88,7 +88,7 @@ class Deal(ModelAbstract):
             vat=self.buyer.vat,
         )
 
-        DealBill.objects.create(deal=self, bill=bill_commission)
+        self.bills.add(bill_commission)
 
         return [bill_sell, bill_proceeds, bill_commission]
 
