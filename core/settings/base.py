@@ -1,11 +1,13 @@
 from pathlib import Path
+import os
 
 from .config import *  # noqa
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DEBUG = True
+DEBUG = os.environ.get("DEBUG")
 
-SECRET_KEY = "b9a+9f1ip5)y5#s27ewpqw5c-vk2q=-=m4%ybarh*k$&m1y7hs"
+SECRET_KEY = os.environ.get("SECRET_KEY")
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -18,6 +20,7 @@ INSTALLED_APPS = [
     "graphene_django",
     "graphql_auth",
     "billing",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -118,3 +121,7 @@ STATIC_URL = "/static/"
 
 AUTH_USER_MODEL = "auction.Client"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+CELERY_RESULT_BACKEND = "django-db"
+CELERT_CACHE_BACKEND = "django-cache"

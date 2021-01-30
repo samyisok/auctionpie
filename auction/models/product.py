@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from auction.tasks import async_send_email
+
 import logging
 from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
@@ -175,3 +177,6 @@ class Product(models.Model):
         if self.is_ready_to_make_a_deal():
             deal: Deal = self.make_a_deal()
             logger.info(f"make a deal {deal}")
+
+    def send_email(self) -> None:
+        async_send_email.delay("message", "template")

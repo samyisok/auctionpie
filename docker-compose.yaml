@@ -38,7 +38,7 @@ services:
     networks:
       - auctionpie-net
 
-  django:
+  django: &django
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -53,6 +53,22 @@ services:
     env_file:
       - ./env.django.local
       - ./env.postgres.local
+    networks:
+      - auctionpie-net
     ports:
       - "8000:8000"
     command: /start
+
+
+  celeryworker:
+    <<: *django
+    image: celeryworker
+    container_name: celeryworker
+    depends_on:
+      - redis
+      - postgres
+      - django
+    networks:
+      - auctionpie-net
+    ports: []
+    command: /start-celeryworker
