@@ -49,7 +49,7 @@ services:
       - postgres
       - redis
     volumes:
-      - .:/app:z
+      - .:/code
     env_file:
       - ./env.django.local
       - ./env.postgres.local

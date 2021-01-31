@@ -180,3 +180,4 @@ tags
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/django,vim,vscode
+auction/migrations/__pycache__/__init__.cpython-38.pyc
