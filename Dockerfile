@@ -13,6 +13,15 @@ ENV DJANGO_ENV=${DJANGO_ENV} \
 
 RUN pip install "poetry==$POETRY_VERSION"
 
+RUN apt-get update \
+  # dependencies for building Python packages
+  && apt-get install -y build-essential \
+  # psycopg2 dependencies
+  && apt-get install -y libpq-dev \
+  # cleaning up unused files
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /code
 COPY poetry.lock pyproject.toml /code/
 

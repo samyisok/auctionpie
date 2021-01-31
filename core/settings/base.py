@@ -87,10 +87,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
+CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+CELERY_RESULT_BACKEND = "django-db"
+CELERT_CACHE_BACKEND = "django-cache"
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": os.environ.get("POSTGRES_HOST"),
+        "PORT": os.environ.get("POSTGRES_PORT"),
     }
 }
 
@@ -121,7 +129,3 @@ STATIC_URL = "/static/"
 
 AUTH_USER_MODEL = "auction.Client"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
-CELERY_BROKER_URL = os.environ.get("REDIS_URL")
-CELERY_RESULT_BACKEND = "django-db"
-CELERT_CACHE_BACKEND = "django-cache"
