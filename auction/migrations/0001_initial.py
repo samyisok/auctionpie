@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
                 ),
                 ("email", models.CharField(max_length=128, unique=True)),
                 ("password", models.CharField(max_length=128)),
-                ("cdate", models.TimeField(auto_now_add=True)),
-                ("mdate", models.TimeField(auto_now=True)),
+                ("cdate", models.DateTimeField(auto_now_add=True)),
+                ("mdate", models.DateTimeField(auto_now=True)),
                 ("company_id", models.IntegerField(default=1)),
                 ("activated", models.BooleanField(default=False)),
                 (

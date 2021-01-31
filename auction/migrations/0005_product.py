@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ("description", models.TextField()),
                 ("start_price", models.FloatField()),
                 ("buy_price", models.FloatField()),
-                ("start_date", models.TimeField()),
+                ("start_date", models.DateTimeField()),
                 (
                     "status",
                     models.CharField(
@@ -42,12 +42,13 @@ class Migration(migrations.Migration):
                         max_length=64,
                     ),
                 ),
-                ("cdate", models.TimeField(auto_now_add=True)),
-                ("mdate", models.TimeField(auto_now=True)),
+                ("cdate", models.DateTimeField(auto_now_add=True)),
+                ("mdate", models.DateTimeField(auto_now=True)),
                 (
                     "seller",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="auction.client"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="auction.client",
                     ),
                 ),
             ],

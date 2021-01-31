@@ -16,7 +16,7 @@ def insert_first_company(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("auction", "0018_company"),
+        ("auction", "0009_final_20210131_1800"),
     ]
 
     operations = [migrations.RunPython(insert_first_company)]

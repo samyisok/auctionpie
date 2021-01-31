@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="product",
             name="end_date",
-            field=models.TimeField(default=django.utils.timezone.now),
+            field=models.DateTimeField(default=django.utils.timezone.now),
             preserve_default=False,
         ),
     ]

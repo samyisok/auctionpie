@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="clientdata",
             name="cdate",
-            field=models.TimeField(
+            field=models.DateTimeField(
                 auto_now_add=True, default=django.utils.timezone.now
             ),
             preserve_default=False,
@@ -22,6 +22,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="clientdata",
             name="mdate",
-            field=models.TimeField(auto_now=True),
+            field=models.DateTimeField(auto_now=True),
         ),
     ]

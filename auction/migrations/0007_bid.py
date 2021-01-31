@@ -32,12 +32,13 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("price", models.DecimalField(decimal_places=2, max_digits=11)),
-                ("cdate", models.TimeField(auto_now_add=True)),
-                ("mdate", models.TimeField(auto_now=True)),
+                ("cdate", models.DateTimeField(auto_now_add=True)),
+                ("mdate", models.DateTimeField(auto_now=True)),
                 (
                     "client",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="auction.client"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="auction.client",
                     ),
                 ),
                 (
