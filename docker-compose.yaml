@@ -64,6 +64,7 @@ services:
     <<: *django
     image: celeryworker
     container_name: celeryworker
+    user: celery
     depends_on:
       - redis
       - postgres
