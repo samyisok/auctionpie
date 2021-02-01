@@ -73,3 +73,18 @@ services:
       - auctionpie-net
     ports: []
     command: /start-celeryworker
+
+
+  celerybeat:
+    <<: *django
+    image: celerybeat
+    container_name: celerybeat
+    user: celery
+    depends_on:
+      - redis
+      - postgres
+      - django
+    networks:
+      - auctionpie-net
+    ports: []
+    command: /start-celerybeat

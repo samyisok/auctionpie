@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "graphql_auth",
     "billing",
     "django_celery_results",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
