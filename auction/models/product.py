@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from auction.tasks import async_send_email
+from auction.tasks import product_send_email
 
 import logging
 from decimal import Decimal
@@ -178,5 +178,10 @@ class Product(models.Model):
             deal: Deal = self.make_a_deal()
             logger.info(f"make a deal {deal}")
 
-    def send_email(self) -> None:
-        async_send_email.delay("message", "template")
+    def send_email(self, type: str):
+        if type == "new":
+            client: Client = self.seller
+            return client.email_user(subject="new product", message=str(self))
+
+    def async_send_email(self) -> None:
+        product_send_email.delay(product_id=self.id, type="new")

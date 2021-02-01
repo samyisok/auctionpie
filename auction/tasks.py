@@ -1,8 +1,9 @@
 from celery import shared_task
+from django.apps import apps
 
 
 @shared_task
-def async_send_email(msg, template):
-    # TODO в будущем будем слать почту, а пока так.
-    print(msg, template)
-    return True
+def product_send_email(product_id, type):
+    product_model = apps.get_model("auction", "Product")
+    product = product_model.objects.get(id=product_id)
+    return product.send_email(type)

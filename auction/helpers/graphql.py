@@ -17,7 +17,7 @@ def create_new_product(product_input: ProductInput) -> Product:
     )
 
     product.save()
-    product.send_email()
+    product.async_send_email()
     return product
 
 
