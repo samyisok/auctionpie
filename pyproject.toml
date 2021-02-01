@@ -16,6 +16,7 @@ celery = "^5.0.5"
 django-celery-results = "^2.0.1"
 redis = "^3.5.3"
 psycopg2 = "^2.8.6"
+tblib = "^1.7.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.4"
