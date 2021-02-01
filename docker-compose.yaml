@@ -70,5 +70,7 @@ services:
       - django
     networks:
       - auctionpie-net
+    environment: 
+      C_FORCE_ROOT: 1
     ports: []
     command: /start-celeryworker
