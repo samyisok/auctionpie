@@ -42,7 +42,7 @@ class ProductInput(Structure):
     start_price: Decimal
     buy_price: Optional[Decimal]
     end_date: datetime.datetime
-    start_date: Optional[datetime.datetime]
+    start_date: datetime.datetime
 
     @validator("start_price")
     def check_start_price(cls, v):

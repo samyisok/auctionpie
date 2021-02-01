@@ -39,9 +39,9 @@ class TransactionDepositTestCase(TestCase, PrecreateMixin):
     def test_str(self):
         """ str should be success """
 
-        self.assertEqual(
+        self.assertRegex(
             str(self.bill_prepay),
-            "#1 prepay: 12.34(emailfortest@test.ru)(not_activated)",
+            r"^#\d+ prepay: 12.34\(emailfortest@test\.ru\)\(not_activated\)",
         )
 
     def test_activate(self):

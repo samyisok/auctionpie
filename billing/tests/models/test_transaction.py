@@ -45,7 +45,9 @@ class TransactionDepositTestCase(TestCase, PrecreateMixin):
             comment="test",
         )
 
-        self.assertEqual(str(tnx), f"#1 deposit: 12.34({email})")
+        self.assertRegex(
+            str(tnx), r"^#\d+ deposit: 12.34\(emailfortest@test\.ru\)"
+        )
 
     def test_deposit_success(self):
         """deposit should be success"""

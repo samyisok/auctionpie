@@ -54,8 +54,8 @@ class Product(models.Model):
     buy_price = models.DecimalField(
         max_digits=11, decimal_places=2, null=True, blank=True
     )
-    start_date = models.DateTimeField(blank=True, null=True)
-    end_date = models.DateTimeField(blank=True, null=True)
+    start_date = models.DateTimeField(blank=True, null=False)
+    end_date = models.DateTimeField(blank=True, null=False)
     status = models.CharField(
         choices=ProductStatus.choices,
         default=ProductStatus.INACTIVE,

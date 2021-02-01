@@ -133,12 +133,6 @@ class ModelsProductTestCase(TestCase):
         self.product.save()
         self.assertFalse(self.product.is_time_condition_meet())
 
-    def test_is_time_condition_meet_false_end_date(self):
-        """ should return false if end date not defined """
-        self.product.end_date = None
-        self.product.save()
-        self.assertFalse(self.product.is_time_condition_meet())
-
     def test_is_ready_to_make_a_deal_status_false(self):
         """ should return false if status not Actve """
         self.assertFalse(self.product.is_ready_to_make_a_deal())
