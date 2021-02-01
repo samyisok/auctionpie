@@ -234,3 +234,19 @@ class ModelsProductTestCase(TestCase):
         self.product.id = None
         self.product.save()
         mock_full_clean.assert_called_once_with()
+
+    @mock.patch(
+        "auction.models.Client.email_user",
+    )
+    def test_send_email_new(self, mock_email_user):
+        """ should call email user if type new """
+        self.product.send_email(type="new")
+        mock_email_user.assert_called_once_with(
+            subject="new product",
+            message=str(self.product),
+        )
+
+    def test_send_email_raise_exception(self):
+        """ should raise exception if type is other"""
+        with self.assertRaisesMessage(ProductException, ""):
+            self.product.send_email(type=None)

@@ -53,7 +53,8 @@ class HelperGraphqlCreateProductTestCase(TestCase):
         self.seller = Client.objects.create_user(email_seller, "password")
         self.product_params = {"seller": self.seller, **product_params}
 
-    def test_create_product_success(self):
+    @mock.patch("auction.models.Product.async_send_email")
+    def test_create_product_success(self, mock_async_send_email):
         product_input = ProductInput(**self.product_params)
 
         product = graphql_helper.create_new_product(product_input)
@@ -65,3 +66,4 @@ class HelperGraphqlCreateProductTestCase(TestCase):
         self.assertIsNotNone(product)
         self.assertIsInstance(product, Product)
         self.assertDictEqual(product_attributes, product_params)
+        mock_async_send_email.assert_called_once_with(type="new")

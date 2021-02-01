@@ -178,10 +178,14 @@ class Product(models.Model):
             deal: Deal = self.make_a_deal()
             logger.info(f"make a deal {deal}")
 
-    def send_email(self, type: str):
+    def send_email(self, type: str) -> None:
+        """ отсылаем письмо продавцу в зависимости от типа"""
         if type == "new":
             client: Client = self.seller
-            return client.email_user(subject="new product", message=str(self))
+            client.email_user(subject="new product", message=str(self))
+        else:
+            raise ProductException("wrong type send email")
 
-    def async_send_email(self) -> None:
-        product_send_email.delay(product_id=self.id, type="new")
+    def async_send_email(self, type: str) -> None:
+        """ ставим задачу на отсылку письма """
+        product_send_email.delay(product_id=self.id, type=type)
