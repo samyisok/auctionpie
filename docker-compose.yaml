@@ -88,3 +88,21 @@ services:
       - auctionpie-net
     ports: []
     command: /start-celerybeat
+
+
+  flower:
+    <<: *django
+    image: flower
+    container_name: flower
+    user: celery
+    depends_on:
+      - redis
+      - postgres
+      - django
+      - celerybeat
+      - celeryworker
+    networks:
+      - auctionpie-net
+    ports:
+      - "5555:5555"
+    command: /start-flower

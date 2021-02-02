@@ -20,7 +20,6 @@ INSTALLED_APPS = [
     "graphene_django",
     "graphql_auth",
     "billing",
-    "django_celery_results",
     "django_celery_beat",
 ]
 
@@ -89,8 +88,12 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
-CELERY_RESULT_BACKEND = "django-db"
-CELERT_CACHE_BACKEND = "django-cache"
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_TIME_LIMIT = 5 * 60
+CELERY_TASK_SOFT_TIME_LIMIT = 60
 
 DATABASES = {
     "default": {
