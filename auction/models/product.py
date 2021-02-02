@@ -177,6 +177,7 @@ class Product(models.Model):
         if self.is_ready_to_make_a_deal():
             deal: Deal = self.make_a_deal()
             logger.info(f"make a deal {deal}")
+            deal.async_finalize()
 
     def send_email(self, type: str) -> None:
         """ отсылаем письмо продавцу в зависимости от типа"""

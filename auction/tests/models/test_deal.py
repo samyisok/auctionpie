@@ -84,3 +84,10 @@ class ModelDealTestCase(TestCase):
         value = self.deal.finalize()
         self.assertEqual(value, None)
         mock.assert_called_once_with()
+
+    @mock.patch("auction.models.deal.deal_finalize", return_value=None)
+    def test_async_finalize(self, mock_deal_finalize):
+        """ should call create_bills """
+        value = self.deal.async_finalize()
+        self.assertEqual(value, None)
+        mock_deal_finalize.assert_called_once_with(deal_id=self.deal.id)

@@ -194,6 +194,7 @@ class ModelsProductTestCase(TestCase):
     def test_bid_posthook(self, mock_a_deal, mock_is_ready):
         """ should call make_a_deal """
         deal = mock.Mock(spec=Deal)
+        deal.async_finalize = mock.Mock()
         mock_a_deal.return_value = deal
 
         log_msg1 = (
@@ -206,6 +207,7 @@ class ModelsProductTestCase(TestCase):
         ) as mock_log:
             self.product.bid_posthook()
             mock_is_ready.assert_called_once_with()
+            deal.async_finalize.assert_called_once_with()
             self.assertEqual(mock_log.output, [log_msg1, log_msg2])
 
     def test_clean_raise_exception_active(self):

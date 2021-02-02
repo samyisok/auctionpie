@@ -5,6 +5,7 @@ from django.db import models
 
 from auction.models import Client
 from auction.models.base import ModelAbstract
+from auction.tasks import deal_finalize
 from billing.meta import BillType
 from billing.models import Bill
 
@@ -92,10 +93,17 @@ class Deal(ModelAbstract):
 
         return [bill_sell, bill_proceeds, bill_commission]
 
-    def finalize(self):
+    def finalize(self) -> None:
         """финализируем сделку"""
         self.create_bills()
         # TODO send email
+
+    def async_finalize(self) -> None:
+        """
+        асинхронно активируем сделку
+        вызываем при создании сделки.
+        """
+        deal_finalize(deal_id=self.id)
 
 
 class DealBill(ModelAbstract):
