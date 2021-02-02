@@ -22,14 +22,17 @@ class BillStrategy:
     def __init__(self, bill: Bill) -> None:
         self.bill = bill
 
+        # Не позволяем создовать стратегии без типа счета
+        if self.bill_type is None:
+            raise NotImplementedError
+
     @classmethod
     def matches(cls, bill: Bill) -> bool:
+        """ метод проверки выбора стратегии в фабрике стратегий """
         return bill.bill_type is cls.bill_type
 
-    def activate(self) -> Bill:
-        raise NotImplementedError
-
     def bill_activate(self) -> Bill:
+        """ Активация счета """
         self.bill.status = BillStatus.ACTIVATED
         self.bill.save()
 
@@ -37,6 +40,12 @@ class BillStrategy:
 
     def transaction_create(self) -> Transaction:
         raise NotImplementedError
+
+    def activate(self) -> Bill:
+        """ Метод активации счета, в момент активации проводим транзакцию по балансу """
+        self.transaction_create()
+
+        return self.bill_activate()
 
 
 class BillStrategyDeposit(BillStrategy):
@@ -64,23 +73,11 @@ class BillStrategyPrepay(BillStrategyDeposit):
 
     bill_type = BillType.PREPAY
 
-    def activate(self) -> Bill:
-        """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        self.transaction_create()
-
-        return self.bill_activate()
-
 
 class BillStrategySell(BillStrategyExpense):
     """Стратегия реализации"""
 
     bill_type = BillType.SELL
-
-    def activate(self) -> Bill:
-        """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        self.transaction_create()
-
-        return self.bill_activate()
 
 
 class BillStrategyCommission(BillStrategyExpense):
@@ -88,23 +85,11 @@ class BillStrategyCommission(BillStrategyExpense):
 
     bill_type = BillType.COMMISSION
 
-    def activate(self) -> Bill:
-        """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        self.transaction_create()
-
-        return self.bill_activate()
-
 
 class BillStrategyProceeds(BillStrategyDeposit):
     """Стратегия выручки"""
 
     bill_type = BillType.PROCEEDS
-
-    def activate(self) -> Bill:
-        """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        self.transaction_create()
-
-        return self.bill_activate()
 
 
 class BillStrategyFactory:

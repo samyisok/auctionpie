@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from auction.tasks import product_send_email
-
 import logging
 from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
@@ -10,6 +8,8 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+
+from auction.tasks import product_send_email
 
 from .client import Client
 

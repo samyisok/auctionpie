@@ -10,6 +10,7 @@ build:
 	docker-compose up --build
 
 test:
+	isort .
 	docker exec django bash -c 'python manage.py test --parallel=4'
 
 restart: stop start

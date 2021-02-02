@@ -2,7 +2,6 @@ import os
 
 from celery import Celery
 
-
 env = "production" if os.environ.get("IS_PRODUCTION") else "dev"
 
 # set the default Django settings module for the 'celery' program.
