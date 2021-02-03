@@ -103,7 +103,7 @@ class Deal(ModelAbstract):
         асинхронно активируем сделку
         вызываем при создании сделки.
         """
-        deal_finalize(deal_id=self.id)
+        deal_finalize.delay(deal_id=self.id)
 
 
 class DealBill(ModelAbstract):
