@@ -95,8 +95,11 @@ class Deal(ModelAbstract):
 
     def finalize(self) -> None:
         """финализируем сделку"""
-        self.create_bills()
         # TODO send email
+        bills: List[Bill] = self.create_bills()
+
+        for bill in bills:
+            bill.async_activate()
 
     def async_finalize(self) -> None:
         """

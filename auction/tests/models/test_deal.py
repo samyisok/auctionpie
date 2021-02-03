@@ -1,7 +1,7 @@
 from datetime import timedelta
 from decimal import Decimal
 from typing import List
-from unittest import mock
+from unittest.mock import Mock, patch
 
 from django.test import TestCase
 from django.utils import timezone
@@ -78,14 +78,20 @@ class ModelDealTestCase(TestCase):
             "#3 commission: 30.00(seller@test.ru)(not_activated)",
         )
 
-    @mock.patch("auction.models.Deal.create_bills", return_value=None)
-    def test_finalize(self, mock):
+    @patch("auction.models.Deal.create_bills")
+    def test_finalize(self, mock_create_bills):
         """ should call create_bills """
+        mock_bill1, mock_bill2 = [Mock(), Mock()]
+        mock_bill1.async_activate = Mock()
+        mock_bill2.async_activate = Mock()
+        mock_create_bills.return_value = [mock_bill1, mock_bill2]
         value = self.deal.finalize()
         self.assertEqual(value, None)
-        mock.assert_called_once_with()
+        mock_create_bills.assert_called_once_with()
+        mock_bill1.async_activate.assert_called_once_with()
+        mock_bill2.async_activate.assert_called_once_with()
 
-    @mock.patch("auction.models.deal.deal_finalize.delay", return_value=None)
+    @patch("auction.models.deal.deal_finalize.delay", return_value=None)
     def test_async_finalize(self, mock_deal_finalize_delay):
         """ should call create_bills """
         value = self.deal.async_finalize()
