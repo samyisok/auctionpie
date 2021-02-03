@@ -9,6 +9,7 @@ from django.utils import timezone
 from auction.models import Client
 from billing.meta import BillStatus, BillType
 from billing.strategies import BillStrategyFactory
+from billing.tasks import bill_activate
 
 if TYPE_CHECKING:
     from billing.models import Transaction
@@ -57,6 +58,10 @@ class Bill(ModelAbstract):
         """ Метод активации счета, в момент активации проводим транзакцию по балансу """
         strategy = BillStrategyFactory.get_strategy(self)
         return strategy.activate()
+
+    def async_activate(self) -> None:
+        """ асинхронная активация счета """
+        bill_activate.delay(bill_id=self.id)
 
     def create_transaction_deposit(self) -> Transaction:
         """ создание пополнение в балансе """

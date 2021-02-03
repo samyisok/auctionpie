@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest import mock
 
 from django.test import TestCase
 
@@ -30,8 +31,8 @@ class PrecreateMixin:
         )
 
 
-class TransactionDepositTestCase(TestCase, PrecreateMixin):
-    """Deposit"""
+class BillModelTestCase(TestCase, PrecreateMixin):
+    """Bill"""
 
     def setUp(self):
         self.precreate_data()
@@ -49,6 +50,14 @@ class TransactionDepositTestCase(TestCase, PrecreateMixin):
         bill = self.bill_prepay.activate()
         self.assertIsInstance(bill, Bill)
         self.assertEqual(bill.status, BillStatus.ACTIVATED)
+
+    @mock.patch("billing.models.bill.bill_activate.delay", return_value=None)
+    def test_async_activate(self, mock_bill_activate_delay):
+        """ should call delay """
+        self.bill_prepay.async_activate()
+        mock_bill_activate_delay.assert_called_once_with(
+            bill_id=self.bill_prepay.id
+        )
 
     def test_create_transaction_deposit(self):
         """ should create a depostit transaction """
