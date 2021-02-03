@@ -11,6 +11,9 @@ build:
 
 test:
 	isort .
-	docker exec django bash -c 'python manage.py test --parallel=4'
+	docker exec django bash -c 'coverage erase && coverage run -m pytest'
+
+coverage:
+	docker exec django bash -c 'coverage report && coverage html'
 
 restart: stop start
