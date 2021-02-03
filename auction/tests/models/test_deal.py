@@ -49,33 +49,33 @@ class ModelDealTestCase(TestCase):
 
         bills: List[Bill] = self.deal.create_bills()
         bill1, bill2, bill3 = bills
-        self.assertEqual(
+        self.assertRegex(
             str(bill1),
-            "#1 sell: 100.00(buyer@test.ru)(not_activated)",
+            r"#\d+ sell: 100.00\(buyer@test.ru\)\(not_activated\)",
         )
-        self.assertEqual(
+        self.assertRegex(
             str(bill2),
-            "#2 proceeds: 100.00(seller@test.ru)(not_activated)",
+            r"#\d+ proceeds: 100.00\(seller@test.ru\)\(not_activated\)",
         )
-        self.assertEqual(
+        self.assertRegex(
             str(bill3),
-            "#3 commission: 30.00(seller@test.ru)(not_activated)",
+            r"#\d+ commission: 30.00\(seller@test.ru\)\(not_activated\)",
         )
 
         # проверяем связки
         bill_sell, bill_proceeds, bill_commission = self.deal.bills.all()
 
-        self.assertEqual(
+        self.assertRegex(
             str(bill_sell),
-            "#1 sell: 100.00(buyer@test.ru)(not_activated)",
+            r"#\d+ sell: 100.00\(buyer@test.ru\)\(not_activated\)",
         )
-        self.assertEqual(
+        self.assertRegex(
             str(bill_proceeds),
-            "#2 proceeds: 100.00(seller@test.ru)(not_activated)",
+            r"#\d+ proceeds: 100.00\(seller@test.ru\)\(not_activated\)",
         )
-        self.assertEqual(
+        self.assertRegex(
             str(bill_commission),
-            "#3 commission: 30.00(seller@test.ru)(not_activated)",
+            r"#\d+ commission: 30.00\(seller@test.ru\)\(not_activated\)",
         )
 
     @patch("auction.models.Deal.create_bills")
