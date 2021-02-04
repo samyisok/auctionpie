@@ -264,3 +264,10 @@ class ModelsProductTestCase(TestCase):
         self.product.status = ProductStatus.DELETED
         with self.assertRaisesMessage(ProductException, "already deleted"):
             self.product.delete()
+
+    def test_delete_raise_solded(self):
+        self.product.status = ProductStatus.SOLD
+        with self.assertRaisesMessage(
+            ProductException, "can not delete solded product"
+        ):
+            self.product.delete()

@@ -198,5 +198,8 @@ class Product(models.Model):
         if self.status == ProductStatus.DELETED:
             raise ProductException("already deleted")
 
+        if self.status == ProductStatus.SOLD:
+            raise ProductException("can not delete solded product")
+
         self.status = ProductStatus.DELETED
         self.save()
