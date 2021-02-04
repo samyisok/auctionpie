@@ -252,3 +252,15 @@ class ModelsProductTestCase(TestCase):
         """ should raise exception if type is other"""
         with self.assertRaisesMessage(ProductException, ""):
             self.product.send_email(type=None)
+
+    @mock.patch("auction.models.Product.save")
+    def test_delete(self, mock_save):
+        """ should success """
+        self.product.delete()
+        self.assertEqual(self.product.status, ProductStatus.DELETED)
+        mock_save.assert_called_once_with()
+
+    def test_delete_raise(self):
+        self.product.status = ProductStatus.DELETED
+        with self.assertRaisesMessage(ProductException, "already deleted"):
+            self.product.delete()

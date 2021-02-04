@@ -4,7 +4,7 @@ from graphql_jwt.decorators import login_required
 
 from .helpers import graphql as graphql_helper
 from .models import Client
-from .structures.graphql import BidInput, ProductInput
+from .structures.graphql import BidInput, ProductDeleteInput, ProductInput
 from .types import BidType, ProductType
 
 
@@ -50,6 +50,31 @@ class CreateProduct(graphene.Mutation):
 
         product = graphql_helper.create_new_product(product_input)
         return CreateProduct(product=product)
+
+
+class DeleteProduct(graphene.Mutation):
+    """
+    Отмена продукта
+    """
+
+    class Arguments:
+        product_id = graphene.ID(required=True)
+
+    product = graphene.Field(ProductType)
+
+    @login_required
+    def mutate(self, info, product_id):
+        client = info.context.user
+
+        if isinstance(client, Client) is not True:
+            raise GraphQLError("Should be client model")
+
+        product_delete_input = ProductDeleteInput(
+            product_id=product_id,
+        )
+
+        product = graphql_helper.delete_product(product_delete_input)
+        return DeleteProduct(product=product)
 
 
 class CreateBid(graphene.Mutation):

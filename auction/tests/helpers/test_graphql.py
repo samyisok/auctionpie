@@ -7,7 +7,9 @@ from django.utils import timezone
 
 from auction.helpers import graphql as graphql_helper
 from auction.models import Bid, Client, Product
-from auction.structures.graphql import BidInput, ProductInput
+from auction.models.product import ProductStatus
+from auction.structures.graphql import (BidInput, ProductDeleteInput,
+                                        ProductInput)
 
 email = "emailfortest@test.ru"
 email_seller = "seller@test.ru"
@@ -67,3 +69,23 @@ class HelperGraphqlCreateProductTestCase(TestCase):
         self.assertIsInstance(product, Product)
         self.assertDictEqual(product_attributes, product_params)
         mock_async_send_email.assert_called_once_with(type="new")
+
+
+class HelperGraphqlDeleteProductTestCase(TestCase):
+    """ Delete product """
+
+    def setUp(self):
+        self.seller = Client.objects.create_user(email_seller, "password")
+        self.product_params = {"seller": self.seller, **product_params}
+        self.product = Product.objects.create(**self.product_params)
+
+    def test_delete_product_success(self):
+        product_delete_input = ProductDeleteInput(product_id=self.product.id)
+
+        product = graphql_helper.delete_product(
+            product_delete_input=product_delete_input
+        )
+
+        self.assertIsNotNone(product)
+        self.assertIsInstance(product, Product)
+        self.assertEqual(product.status, ProductStatus.DELETED)

@@ -63,3 +63,7 @@ class ProductInput(Structure):
         if v >= values["end_date"]:
             raise ValueError("start_date should be lesser than end_date")
         return v
+
+
+class ProductDeleteInput(Structure):
+    product_id: int

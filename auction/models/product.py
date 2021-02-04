@@ -30,7 +30,8 @@ class ProductStatus(models.TextChoices):
 
     statuses flow
     inactive->active->sold->canceled
-    inactive->active->deleted || inactive->deleted
+    inactive->active->deleted
+    inactive->deleted
     """
 
     ACTIVE = "active", "Активный"
@@ -190,3 +191,12 @@ class Product(models.Model):
     def async_send_email(self, type: str) -> None:
         """ ставим задачу на отсылку письма """
         product_send_email.delay(product_id=self.id, type=type)
+
+    def delete(self) -> None:
+        """ отменяем продукт """
+
+        if self.status == ProductStatus.DELETED:
+            raise ProductException("already deleted")
+
+        self.status = ProductStatus.DELETED
+        self.save()
