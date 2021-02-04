@@ -193,7 +193,7 @@ class Product(models.Model):
         product_send_email.delay(product_id=self.id, type=type)
 
     def delete(self) -> None:
-        """ отменяем продукт """
+        """ клиент ставит статус удаленный продукт """
 
         if self.status == ProductStatus.DELETED:
             raise ProductException("already deleted")
