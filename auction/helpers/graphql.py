@@ -1,9 +1,11 @@
 """
 Методы для вызова из graphql
 """
+from graphql import GraphQLError
+
 from auction.models import Bid, Product
 from auction.structures.graphql import (BidInput, ProductDeleteInput,
-                                        ProductInput)
+                                        ProductInput, ProductUpdateInput)
 
 
 def create_new_product(product_input: ProductInput) -> Product:
@@ -22,8 +24,27 @@ def create_new_product(product_input: ProductInput) -> Product:
     return product
 
 
-def update_product():
-    pass
+def update_product(product_update_input: ProductUpdateInput) -> Product:
+    product: Product = Product.objects.get(id=product_update_input.product_id)
+
+    if product_update_input.seller != product.seller:
+        raise GraphQLError("wrong user")
+
+    changes: dict = {
+        key: value
+        for (key, value) in product_update_input.dict().items()
+        if key not in ["seller", "product_id"] and value is not None
+    }
+
+    if not changes:
+        raise GraphQLError("no changes")
+
+    for (key, value) in changes.items():
+        setattr(product, key, value)
+
+    product.save()
+
+    return product
 
 
 def delete_product(product_delete_input: ProductDeleteInput):

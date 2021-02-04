@@ -9,7 +9,7 @@ from auction.helpers import graphql as graphql_helper
 from auction.models import Bid, Client, Product
 from auction.models.product import ProductStatus
 from auction.structures.graphql import (BidInput, ProductDeleteInput,
-                                        ProductInput)
+                                        ProductInput, ProductUpdateInput)
 
 email = "emailfortest@test.ru"
 email_seller = "seller@test.ru"
@@ -89,3 +89,54 @@ class HelperGraphqlDeleteProductTestCase(TestCase):
         self.assertIsNotNone(product)
         self.assertIsInstance(product, Product)
         self.assertEqual(product.status, ProductStatus.DELETED)
+
+
+class HelperGraphqlUpdateProductTestCase(TestCase):
+    """ Update product """
+
+    def setUp(self):
+        self.seller = Client.objects.create_user(email_seller, "password")
+        self.product_params = {"seller": self.seller, **product_params}
+        self.product = Product.objects.create(**self.product_params)
+
+    def test_create_product_success(self):
+        """ update all fields """
+        new_product_params = {
+            "name": "new product name",
+            "description": "new product desc",
+            "start_price": Decimal(99),
+            "buy_price": Decimal(199),
+            "start_date": timezone.now() + timedelta(10),
+            "end_date": timezone.now() + timedelta(20),
+        }
+
+        product_update_input = ProductUpdateInput(
+            product_id=self.product.id, seller=self.seller, **new_product_params
+        )
+
+        product = graphql_helper.update_product(product_update_input)
+
+        updated_product_attributes = {
+            k: product.__dict__[k] for k in new_product_params.keys()
+        }
+
+        self.assertIsNotNone(product)
+        self.assertIsInstance(product, Product)
+
+        self.assertDictEqual(updated_product_attributes, new_product_params)
+
+    def test_create_product_success_only_desc(self):
+        """ update only desc field """
+        new_product_params = {
+            "description": "new product desc",
+        }
+
+        product_update_input = ProductUpdateInput(
+            product_id=self.product.id, seller=self.seller, **new_product_params
+        )
+
+        product = graphql_helper.update_product(product_update_input)
+        self.assertIsNotNone(product)
+        self.assertIsInstance(product, Product)
+        self.assertEqual(product.description, new_product_params["description"])
+        self.assertEqual(product.name, product_params["name"])

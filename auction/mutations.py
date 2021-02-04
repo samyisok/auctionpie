@@ -4,7 +4,8 @@ from graphql_jwt.decorators import login_required
 
 from .helpers import graphql as graphql_helper
 from .models import Client
-from .structures.graphql import BidInput, ProductDeleteInput, ProductInput
+from .structures.graphql import (BidInput, ProductDeleteInput, ProductInput,
+                                 ProductUpdateInput)
 from .types import BidType, ProductType
 
 
@@ -50,6 +51,53 @@ class CreateProduct(graphene.Mutation):
 
         product = graphql_helper.create_new_product(product_input)
         return CreateProduct(product=product)
+
+
+class UpdateProduct(graphene.Mutation):
+    """
+    Изменение продукта
+    """
+
+    class Arguments:
+        product_id = graphene.ID(required=True)
+        name = graphene.String(required=False)
+        description = graphene.String(required=False)
+        start_price = graphene.Decimal(required=False)
+        buy_price = graphene.Decimal(required=False)
+        start_date = graphene.DateTime(required=False)
+        end_date = graphene.DateTime(required=False)
+
+    product = graphene.Field(ProductType)
+
+    @login_required
+    def mutate(
+        self,
+        info,
+        product_id,
+        name=None,
+        description=None,
+        start_price=None,
+        end_date=None,
+        buy_price=None,
+        start_date=None,
+    ):
+        client = info.context.user
+        if isinstance(client, Client) is not True:
+            raise GraphQLError("Should be client model")
+
+        product_update_input = ProductUpdateInput(
+            seller=client,
+            product_id=product_id,
+            name=name,
+            description=description,
+            start_price=start_price,
+            buy_price=buy_price,
+            start_date=start_date,
+            end_date=end_date,
+        )
+
+        product = graphql_helper.update_product(product_update_input)
+        return UpdateProduct(product=product)
 
 
 class DeleteProduct(graphene.Mutation):

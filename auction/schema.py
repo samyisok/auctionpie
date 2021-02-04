@@ -1,10 +1,8 @@
 import graphene
 from django.core.paginator import Paginator
 
-from auction.helpers.graphql import delete_product
-
 from .models import Product
-from .mutations import CreateBid, CreateProduct, DeleteProduct
+from .mutations import CreateBid, CreateProduct, DeleteProduct, UpdateProduct
 from .types import ProductType
 
 
@@ -43,6 +41,7 @@ class Mutation(graphene.ObjectType):
     create_product = CreateProduct.Field()
     create_bid = CreateBid.Field()
     delete_product = DeleteProduct.Field()
+    update_product = UpdateProduct.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

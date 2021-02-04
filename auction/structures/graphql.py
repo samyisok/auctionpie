@@ -65,5 +65,43 @@ class ProductInput(Structure):
         return v
 
 
+class ProductUpdateInput(Structure):
+    seller: Client
+    product_id: int
+    name: Optional[str]
+    description: Optional[str]
+    start_price: Optional[Decimal]
+    buy_price: Optional[Decimal]
+    end_date: Optional[datetime.datetime]
+    start_date: Optional[datetime.datetime]
+
+    # TODO check name and desc
+    @validator("product_id")
+    def check_product_id(cls, v):
+        return _is_positive(v, "price must be greater than 0")
+
+    @validator("start_price")
+    def check_start_price(cls, v):
+        if v is None:
+            return v
+        return _is_positive(v, "price must be greater than 0")
+
+    @validator("buy_price")
+    def check_buy_price(cls, v, values, **kwargs):
+        if v is None:
+            return v
+        if v <= values["start_price"]:
+            raise ValueError("buy_price should be greater than start_price")
+        return _is_positive(v, "price must be greater than 0")
+
+    @validator("start_date")
+    def check_date(cls, v, values, **kwargs):
+        if v is None:
+            return v
+        if v >= values["end_date"]:
+            raise ValueError("start_date should be lesser than end_date")
+        return v
+
+
 class ProductDeleteInput(Structure):
     product_id: int
