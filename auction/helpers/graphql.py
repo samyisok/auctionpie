@@ -2,9 +2,13 @@
 Методы для вызова из graphql
 """
 from auction.models import Bid, Product
-from auction.structures.graphql import (BidInput, ProductDeleteInput,
-                                        ProductInput, ProductUpdateInput)
-from core.errors import CoreError
+from auction.structures.graphql import (
+    BidInput,
+    ProductDeleteInput,
+    ProductInput,
+    ProductUpdateInput,
+)
+from core.errors import CodeError
 
 
 def create_new_product(product_input: ProductInput) -> Product:
@@ -27,7 +31,7 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
     product: Product = Product.objects.get(id=product_update_input.product_id)
 
     if product_update_input.seller != product.seller:
-        raise CoreError.WRONG_USER.exception
+        raise CodeError.WRONG_USER.exception
 
     changes: dict = {
         key: value
@@ -36,7 +40,7 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
     }
 
     if not changes:
-        raise CoreError.NO_CHANGES_SPECIFIED.exception
+        raise CodeError.NO_CHANGES_SPECIFIED.exception
 
     for (key, value) in changes.items():
         setattr(product, key, value)

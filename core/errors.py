@@ -3,7 +3,7 @@ from enum import Enum
 from graphql import GraphQLError
 
 
-class CoreError(Enum):
+class CodeError(Enum):
     UNEXPECTED_ERROR = "Unexpected Error"
     NO_CHANGES_SPECIFIED = "No changes specified"
     WRONG_USER = "Wrong user"
