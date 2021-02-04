@@ -160,7 +160,7 @@ class Product(models.Model):
         проверяем множественные условия закрытия сделки.
         """
         # неактивные продукты не можем закрывать.
-        if self.status is not ProductStatus.ACTIVE:
+        if self.status != ProductStatus.ACTIVE:
             return False
 
         # должна быть хоть одна ставка

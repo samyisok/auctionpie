@@ -29,7 +29,7 @@ class BillStrategy:
     @classmethod
     def matches(cls, bill: Bill) -> bool:
         """ метод проверки выбора стратегии в фабрике стратегий """
-        return bill.bill_type is cls.bill_type
+        return bill.bill_type == cls.bill_type
 
     def bill_activate(self) -> Bill:
         """ Активация счета """
