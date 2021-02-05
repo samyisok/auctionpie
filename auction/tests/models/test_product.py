@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from auction.models import Bid, Client, Deal, Product
 from auction.models.product import ProductException, ProductStatus
+from core.errors import CodeError, GenericException
 
 email = "emailfortest@test.ru"
 email_seller = "seller@test.ru"
@@ -74,7 +75,7 @@ class ModelsProductTestCase(TestCase):
     def test_make_a_deal_exception(self):
         """ product should raise exception when bid is None """
         with self.assertRaisesMessage(
-            ProductException, "can not make a deal without bid and bidder"
+            GenericException, "Can not make a deal without bid and bidder"
         ):
             self.product.make_a_deal()
 
@@ -250,7 +251,9 @@ class ModelsProductTestCase(TestCase):
 
     def test_send_email_raise_exception(self):
         """ should raise exception if type is other"""
-        with self.assertRaisesMessage(ProductException, ""):
+        with self.assertRaisesMessage(
+            GenericException, CodeError.WRONG_TYPE.message
+        ):
             self.product.send_email(type=None)
 
     @mock.patch("auction.models.Product.save")
@@ -262,12 +265,14 @@ class ModelsProductTestCase(TestCase):
 
     def test_delete_raise(self):
         self.product.status = ProductStatus.DELETED
-        with self.assertRaisesMessage(ProductException, "already deleted"):
+        with self.assertRaisesMessage(
+            GenericException, CodeError.ALREADY_DELETED.message
+        ):
             self.product.delete()
 
     def test_delete_raise_solded(self):
         self.product.status = ProductStatus.SOLD
         with self.assertRaisesMessage(
-            ProductException, "can not delete solded product"
+            GenericException, CodeError.ALREADY_SOLDED.message
         ):
             self.product.delete()

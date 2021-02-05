@@ -10,6 +10,7 @@ from django.db import models
 from django.utils import timezone
 
 from auction.tasks import product_send_email
+from core.errors import CodeError, GenericException
 
 from .client import Client
 
@@ -119,7 +120,7 @@ class Product(models.Model):
         final_bid: Optional[Bid] = self.get_final_bid()
 
         if final_bid is None:
-            raise ProductException("can not make a deal without bid and bidder")
+            raise CodeError.NOT_FOUND_FINAL_BID.exception
 
         final_price: Decimal = final_bid.price
 
@@ -186,7 +187,7 @@ class Product(models.Model):
             client: Client = self.seller
             client.email_user(subject="new product", message=str(self))
         else:
-            raise ProductException("wrong type send email")
+            raise CodeError.WRONG_TYPE.exception
 
     def async_send_email(self, type: str) -> None:
         """ ставим задачу на отсылку письма """
@@ -196,10 +197,10 @@ class Product(models.Model):
         """ клиент ставит статус удаленный продукт """
 
         if self.status == ProductStatus.DELETED:
-            raise ProductException("already deleted")
+            raise CodeError.ALREADY_DELETED.exception
 
         if self.status == ProductStatus.SOLD:
-            raise ProductException("can not delete solded product")
+            raise CodeError.ALREADY_SOLDED.exception
 
         self.status = ProductStatus.DELETED
         self.save()
