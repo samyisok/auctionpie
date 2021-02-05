@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from auction.models import Bid, Client, Deal, Product
-from auction.models.product import ProductException, ProductStatus
+from auction.models.product import ProductStatus
 from core.errors import CodeError, GenericException
 
 email = "emailfortest@test.ru"

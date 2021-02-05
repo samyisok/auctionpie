@@ -11,7 +11,8 @@ from django.db import models
 from django.utils import timezone
 
 from auction.models import Client
-from billing.meta import TransactionException, TransactionType
+from billing.meta import TransactionType
+from core.errors import CodeError
 
 
 class Transaction(models.Model):
@@ -61,7 +62,7 @@ class Transaction(models.Model):
         Создание депозита
         """
         if amount <= 0:
-            raise TransactionException("amount param should be positive")
+            raise CodeError.AMOUNT_SHOULD_BE_POSITIVE.exception
 
         txn = cls(
             client=client,
@@ -87,7 +88,7 @@ class Transaction(models.Model):
         Создание списания
         """
         if amount <= 0:
-            raise TransactionException("amount param should be positive")
+            raise CodeError.AMOUNT_SHOULD_BE_POSITIVE.exception
         # TODO подумать будем ли уходить в минус или нет при списаниях.
         txn = cls(
             client=client,
@@ -113,10 +114,10 @@ class Transaction(models.Model):
         Вывод средств
         """
         if amount <= 0:
-            raise TransactionException("amount param should be positive")
+            raise CodeError.AMOUNT_SHOULD_BE_POSITIVE.exception
 
         if cls.balance(client=client) < amount:
-            raise TransactionException("not enough amount on balance")
+            raise CodeError.NOT_ENOUGH_BALANCE.exception
 
         txn = cls(
             client=client,
@@ -142,7 +143,7 @@ class Transaction(models.Model):
         создание отмены
         """
         if amount <= 0:
-            raise TransactionException("amount param should be positive")
+            raise CodeError.AMOUNT_SHOULD_BE_POSITIVE.exception
 
         txn = cls(
             client=client,

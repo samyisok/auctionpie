@@ -3,8 +3,9 @@ from decimal import Decimal
 from django.test import TestCase
 
 from auction.models import Client
-from billing.meta import BillStatus, BillType, TransactionException
+from billing.meta import BillStatus, BillType
 from billing.models import Bill, Transaction
+from core.errors import CodeError, GenericException
 
 email = "emailfortest@test.ru"
 amount = Decimal("12.34")
@@ -69,7 +70,7 @@ class TransactionDepositTestCase(TestCase, PrecreateMixin):
     def test_deposit_exception(self):
         """raise TransactionExceptuon with msg"""
         with self.assertRaisesMessage(
-            TransactionException, "amount param should be positive"
+            GenericException, CodeError.AMOUNT_SHOULD_BE_POSITIVE.message
         ):
             Transaction.deposit(
                 amount=Decimal("-12.34"),
@@ -105,7 +106,7 @@ class TransactionExpenseTestCase(TestCase, PrecreateMixin):
     def test_expense_exception(self):
         """raise TransactionExceptuon with msg"""
         with self.assertRaisesMessage(
-            TransactionException, "amount param should be positive"
+            GenericException, CodeError.AMOUNT_SHOULD_BE_POSITIVE.message
         ):
             Transaction.expense(
                 amount=Decimal("-12.34"),
@@ -144,7 +145,7 @@ class TransactionWithdrawTestCase(TestCase, PrecreateMixin):
     def test_withdraw_exception_if_amount_negative(self):
         """raise TransactionExceptuon with msg"""
         with self.assertRaisesMessage(
-            TransactionException, "amount param should be positive"
+            GenericException, CodeError.AMOUNT_SHOULD_BE_POSITIVE.message
         ):
             Transaction.withdraw(
                 amount=Decimal("-12.34"),
@@ -156,7 +157,7 @@ class TransactionWithdrawTestCase(TestCase, PrecreateMixin):
     def test_withdraw_exception_if_balance_not_enough(self):
         """raise TransactionExceptuon with msg"""
         with self.assertRaisesMessage(
-            TransactionException, "not enough amount on balance"
+            GenericException, CodeError.NOT_ENOUGH_BALANCE.message
         ):
             Transaction.withdraw(
                 amount=Decimal("15.00"),
@@ -192,7 +193,7 @@ class TransactionCancellationTestCase(TestCase, PrecreateMixin):
     def test_cancellation_exception(self):
         """raise TransactionExceptuon with msg"""
         with self.assertRaisesMessage(
-            TransactionException, "amount param should be positive"
+            GenericException, CodeError.AMOUNT_SHOULD_BE_POSITIVE.message
         ):
             Transaction.cancellation(
                 amount=Decimal("-12.34"),

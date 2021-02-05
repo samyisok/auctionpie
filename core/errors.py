@@ -16,6 +16,8 @@ class CodeError(Enum):
     ALREADY_SOLDED = "Already solded"
     WRONG_TYPE = "Wrong type"
     ALREADY_HAS_HIGHER_BID = "Already has higher bid"
+    AMOUNT_SHOULD_BE_POSITIVE = "Amount param should be postive"
+    NOT_ENOUGH_BALANCE = "Not enough amount on balance"
 
     def __init__(self, message: str) -> None:
         self.message = message
