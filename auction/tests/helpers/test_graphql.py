@@ -10,6 +10,7 @@ from auction.models import Bid, Client, Product
 from auction.models.product import ProductStatus
 from auction.structures.graphql import (BidInput, ProductDeleteInput,
                                         ProductInput, ProductUpdateInput)
+from core.errors import CodeError, GenericException
 
 email = "emailfortest@test.ru"
 email_seller = "seller@test.ru"
@@ -99,7 +100,7 @@ class HelperGraphqlUpdateProductTestCase(TestCase):
         self.product_params = {"seller": self.seller, **product_params}
         self.product = Product.objects.create(**self.product_params)
 
-    def test_create_product_success(self):
+    def test_update_product_success(self):
         """ update all fields """
         new_product_params = {
             "name": "new product name",
@@ -125,7 +126,7 @@ class HelperGraphqlUpdateProductTestCase(TestCase):
 
         self.assertDictEqual(updated_product_attributes, new_product_params)
 
-    def test_create_product_success_only_desc(self):
+    def test_update_product_success_only_desc(self):
         """ update only desc field """
         new_product_params = {
             "description": "new product desc",
@@ -140,3 +141,37 @@ class HelperGraphqlUpdateProductTestCase(TestCase):
         self.assertIsInstance(product, Product)
         self.assertEqual(product.description, new_product_params["description"])
         self.assertEqual(product.name, product_params["name"])
+
+    def test_update_product_raise_wrong_user(self):
+        """ update raise error wrong user"""
+        new_product_params = {
+            "description": "new product desc",
+        }
+
+        second_seller = Client.objects.create_user(
+            "second_seller@test.com", "password"
+        )
+
+        product_update_input = ProductUpdateInput(
+            product_id=self.product.id,
+            seller=second_seller,
+            **new_product_params,
+        )
+
+        with self.assertRaisesMessage(
+            GenericException, CodeError.WRONG_USER.message
+        ):
+            graphql_helper.update_product(product_update_input)
+
+    def test_update_product_raise_no_changes(self):
+        """ update raise error no changes"""
+        new_product_params = {}
+
+        product_update_input = ProductUpdateInput(
+            product_id=self.product.id, seller=self.seller, **new_product_params
+        )
+
+        with self.assertRaisesMessage(
+            GenericException, CodeError.NO_CHANGES_SPECIFIED.message
+        ):
+            graphql_helper.update_product(product_update_input)

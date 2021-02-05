@@ -3,6 +3,10 @@ from enum import Enum
 from graphql import GraphQLError
 
 
+class GenericException(GraphQLError):
+    ...
+
+
 class CodeError(Enum):
     UNEXPECTED_ERROR = "Unexpected Error"
     NO_CHANGES_SPECIFIED = "No changes specified"
@@ -12,7 +16,7 @@ class CodeError(Enum):
         self.message = message
 
     @property
-    def exception(self) -> GraphQLError:
-        return GraphQLError(
+    def exception(self) -> GenericException:
+        return GenericException(
             message=self.message, extensions={"code": self.name}
         )
