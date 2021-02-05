@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.test import TestCase
 
@@ -8,6 +9,7 @@ from billing.models import Bill
 from billing.strategies import (BillStrategyCommission, BillStrategyFactory,
                                 BillStrategyPrepay, BillStrategyProceeds,
                                 BillStrategySell)
+from core.errors import CodeError, GenericException
 
 email = "emailfortest@test.ru"
 amount = Decimal("100.00")
@@ -70,6 +72,14 @@ class BillStrategyPrepayTestCase(TestCase, PrecreateMixin):
         tnx = self.strategy.transaction_create()
         self.assertEqual(tnx.amount, self.bill_prepay.amount)
 
+    @patch("billing.models.Bill.create_transaction_deposit", return_value=None)
+    def test_transaction_create_raise(self, mock):
+        """ should raise exception if transaction not created """
+        with self.assertRaisesMessage(
+            GenericException, CodeError.TRANSACTION_NOT_CREATED.message
+        ):
+            self.strategy.transaction_create()
+
     def test_activate(self):
         """ should activate """
         bill = self.strategy.activate()
@@ -101,6 +111,14 @@ class BillStrategySellTestCase(TestCase, PrecreateMixin):
         """ should create transaction """
         tnx = self.strategy.transaction_create()
         self.assertEqual(tnx.amount, -1 * self.bill_sell.amount)
+
+    @patch("billing.models.Bill.create_transaction_expense", return_value=None)
+    def test_transaction_create_raise(self, mock):
+        """ should raise exception if transaction not created """
+        with self.assertRaisesMessage(
+            GenericException, CodeError.TRANSACTION_NOT_CREATED.message
+        ):
+            self.strategy.transaction_create()
 
     def test_activate(self):
         """ should activate """
@@ -134,6 +152,14 @@ class BillStrategyCommissionTestCase(TestCase, PrecreateMixin):
         tnx = self.strategy.transaction_create()
         self.assertEqual(tnx.amount, -1 * self.bill_commission.amount)
 
+    @patch("billing.models.Bill.create_transaction_expense", return_value=None)
+    def test_transaction_create_raise(self, mock):
+        """ should raise exception if transaction not created """
+        with self.assertRaisesMessage(
+            GenericException, CodeError.TRANSACTION_NOT_CREATED.message
+        ):
+            self.strategy.transaction_create()
+
     def test_activate(self):
         """ should activate """
         bill = self.strategy.activate()
@@ -165,6 +191,14 @@ class BillStrategyProceedsTestCase(TestCase, PrecreateMixin):
         """ should create transaction """
         tnx = self.strategy.transaction_create()
         self.assertEqual(tnx.amount, self.bill_proceeds.amount)
+
+    @patch("billing.models.Bill.create_transaction_deposit", return_value=None)
+    def test_transaction_create_raise(self, mock):
+        """ should raise exception if transaction not created """
+        with self.assertRaisesMessage(
+            GenericException, CodeError.TRANSACTION_NOT_CREATED.message
+        ):
+            self.strategy.transaction_create()
 
     def test_activate(self):
         """ should activate """

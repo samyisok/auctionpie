@@ -7,7 +7,8 @@ if TYPE_CHECKING:
 
 from typing import Optional, Tuple
 
-from billing.meta import BillException, BillStatus, BillType
+from billing.meta import BillStatus, BillType
+from core.errors import CodeError
 
 
 class BillStrategy:
@@ -53,7 +54,7 @@ class BillStrategyDeposit(BillStrategy):
         self.transaction = self.bill.create_transaction_deposit()
 
         if self.transaction is None:
-            raise BillException("transaction was not created")
+            raise CodeError.TRANSACTION_NOT_CREATED.exception
 
         return self.transaction
 
@@ -63,7 +64,7 @@ class BillStrategyExpense(BillStrategy):
         self.transaction = self.bill.create_transaction_expense()
 
         if self.transaction is None:
-            raise BillException("transaction was not created")
+            raise CodeError.TRANSACTION_NOT_CREATED.exception
 
         return self.transaction
 

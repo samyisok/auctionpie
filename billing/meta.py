@@ -1,10 +1,6 @@
 from django.db import models
 
 
-class BillException(Exception):
-    pass
-
-
 class BillType(models.TextChoices):
     """
     prepay - предоплаты через платежные системы (+)
