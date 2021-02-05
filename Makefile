@@ -11,7 +11,7 @@ build:
 
 test:
 	isort .
-	docker exec django bash -c 'coverage erase && coverage run -m pytest'
+	docker exec django bash -c 'coverage erase && coverage run -m pytest -s'
 
 coverage:
 	docker exec django bash -c 'coverage report && coverage html'

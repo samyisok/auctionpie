@@ -18,5 +18,13 @@ class CodeError(Enum):
     @property
     def exception(self) -> GenericException:
         return GenericException(
-            message=self.message, extensions={"code": self.name}
+            message=self.message, extensions={"code": self.code}
         )
+
+    def __str__(self):
+        """ Возвращаем мессадж по дефолту """
+        return str(self.message)
+
+    @property
+    def code(self):
+        return self.name
