@@ -10,7 +10,7 @@ from django.db import models
 from django.utils import timezone
 
 from auction.tasks import product_send_email
-from core.errors import CodeError, GenericException
+from core.errors import CodeError
 
 from .client import Client
 

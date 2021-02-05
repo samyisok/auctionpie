@@ -15,6 +15,7 @@ class CodeError(Enum):
     ALREADY_DELETED = "Already deleted"
     ALREADY_SOLDED = "Already solded"
     WRONG_TYPE = "Wrong type"
+    ALREADY_HAS_HIGHER_BID = "Already has higher bid"
 
     def __init__(self, message: str) -> None:
         self.message = message

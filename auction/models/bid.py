@@ -3,14 +3,11 @@ from decimal import Decimal
 
 from django.db import models
 
-from .client import Client
-from .product import Product
+from auction.models.client import Client
+from auction.models.product import Product
+from core.errors import CodeError
 
 logger = logging.getLogger(__name__)
-
-
-class BidException(Exception):
-    pass
 
 
 class BidStatus(models.TextChoices):
@@ -57,7 +54,7 @@ class Bid(models.Model):
         if not Bid.is_possible_to_place_bid(
             product=self.product, price=self.price
         ):
-            raise BidException("already have higher bid")
+            raise CodeError.ALREADY_HAS_HIGHER_BID.exception
 
     def save(self, *args, **kwargs):
         """ проверки перед сохранением ставки """

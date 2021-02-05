@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from auction.models import Bid, Client, Product
-from auction.models.bid import BidException
+from core.errors import CodeError, GenericException
 
 email = "emailfortest@test.ru"
 email_seller = "seller@test.ru"
@@ -73,12 +73,16 @@ class ModelsBidTestCase(TestCase):
         should raise a exception when create a bid
         with lower or equal amount of price than other bids for this product
         """
-        with self.assertRaisesMessage(BidException, "already have higher bid"):
+        with self.assertRaisesMessage(
+            GenericException, CodeError.ALREADY_HAS_HIGHER_BID.message
+        ):
             Bid.objects.create(
                 client=self.client, product=self.product, price=amount - 1
             )
 
-        with self.assertRaisesMessage(BidException, "already have higher bid"):
+        with self.assertRaisesMessage(
+            GenericException, CodeError.ALREADY_HAS_HIGHER_BID.message
+        ):
             Bid.objects.create(
                 client=self.client, product=self.product, price=amount
             )
