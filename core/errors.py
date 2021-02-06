@@ -14,6 +14,7 @@ class CodeError(Enum):
     NOT_FOUND_FINAL_BID = "Can not make a deal without bid and bidder"
     ALREADY_DELETED = "Already deleted"
     ALREADY_SOLDED = "Already solded"
+    ALREADY_ACTIVATED = "Already activated"
     WRONG_TYPE = "Wrong type"
     ALREADY_HAS_HIGHER_BID = "Already has higher bid"
     AMOUNT_SHOULD_BE_POSITIVE = "Amount param should be postive"

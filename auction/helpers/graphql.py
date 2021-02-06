@@ -46,6 +46,10 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
     return product
 
 
+def activate_product():
+    pass
+
+
 def delete_product(product_delete_input: ProductDeleteInput):
     product = Product.objects.get(id=product_delete_input.product_id)
     product.delete()

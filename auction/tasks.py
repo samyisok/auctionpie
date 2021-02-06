@@ -1,8 +1,17 @@
-from celery import shared_task
+import logging
+from typing import TYPE_CHECKING
+
 from django.apps import apps
 
+from core.celery import app
 
-@shared_task
+if TYPE_CHECKING:
+    from auction.models import Deal, Product
+
+logger = logging.getLogger(__name__)
+
+
+@app.task()
 def product_send_email(product_id, type):
     """ посылаем письмо клиенту по продукту """
     product_model = apps.get_model("auction", "Product")
@@ -10,15 +19,29 @@ def product_send_email(product_id, type):
     return product.send_email(type)
 
 
-@shared_task
+@app.task()
 def deal_send_email(deal_id, type):
     """ посылаем письмо клиенту по сделки """
     pass
 
 
-@shared_task
+@app.task()
 def deal_finalize(deal_id):
     """ финализируем сделку """
     deal_model = apps.get_model("auction", "Deal")
     deal = deal_model.objects.get(id=deal_id)
     return deal.finalize()
+
+
+@app.task(bind=True, max_retries=1200)
+def product_try_to_make_a_deal(self, product_id):
+    try:
+        product_model = apps.get_model("auction", "Product")
+        product: Product = product_model.objects.get(id=product_id)
+        if product.is_ready_to_make_a_deal():
+            product.make_a_deal()
+        else:
+            raise Exception("Product not ready yet")
+    except Exception as exc:
+        logger.warn(f"Failed make a deal: {exc}")
+        raise self.retry(exc=exc, countdown=5)

@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
-from auction.tasks import product_send_email
+from auction.tasks import product_send_email, product_try_to_make_a_deal
 from core.errors import CodeError
 
 from .client import Client
@@ -204,3 +204,14 @@ class Product(models.Model):
 
         self.status = ProductStatus.DELETED
         self.save()
+
+    def activate(self) -> None:
+        """ Выставление продукта на акцион """
+        if self.status == ProductStatus.ACTIVE:
+            raise CodeError.ALREADY_ACTIVATED.exception
+
+        self.status = ProductStatus.ACTIVE
+        self.save()
+
+        # Ставим задачу в будущие, чтобы закрыть сделку.
+        product_try_to_make_a_deal.apply_async(eta=self.end_date)
