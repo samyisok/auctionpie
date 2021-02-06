@@ -66,4 +66,4 @@ class Bid(models.Model):
         try:
             self.product.bid_posthook()
         except Exception as e:
-            logger.warn(f"failed posthook: {e}")
+            logger.warning(f"failed posthook: {e}")

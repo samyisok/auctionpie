@@ -43,5 +43,5 @@ def product_try_to_make_a_deal(self, product_id):
         else:
             raise Exception("Product not ready yet")
     except Exception as exc:
-        logger.warn(f"Failed make a deal: {exc}")
+        logger.warning(f"Failed make a deal: {exc}")
         raise self.retry(exc=exc, countdown=5)
