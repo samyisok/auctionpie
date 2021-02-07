@@ -1,13 +1,13 @@
 from datetime import timedelta
 from decimal import Decimal
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from celery.exceptions import Retry
 from django.test import TestCase
 from django.utils import timezone
 
 from auction.models import Client, Product
-from auction.tasks import product_try_to_make_a_deal
+from auction.tasks import product_send_email, product_try_to_make_a_deal
 
 email_seller = "seller@test.ru"
 amount = Decimal("12.34")
@@ -47,3 +47,26 @@ class TaskProductTryToMakeADealTestCase(TestCase):
         with self.assertRaises(Retry):
             product_try_to_make_a_deal(self.product.id)
             mock_is_ready.assert_called_once_with()
+
+
+class TaskProductSendEmalTestCase(TestCase):
+    """ should call send email from product """
+
+    @patch("django.apps.apps.get_model")
+    def test_product_send_email(
+        self,
+        mock_get_model,
+    ):
+        """ should call send email """
+        mock_product = Mock(send_email=Mock())
+
+        mock_product_model = Mock(
+            objects=Mock(get=Mock(return_value=mock_product))
+        )
+
+        mock_get_model.return_value = mock_product_model
+        product_send_email(42, "type")
+
+        mock_get_model.assert_called_once_with("auction", "Product")
+        mock_product_model.objects.get.assert_called_once_with(id=42)
+        mock_product.send_email.assert_called_once_with("type")

@@ -6,17 +6,17 @@ from django.apps import apps
 from core.celery import app
 
 if TYPE_CHECKING:
-    from auction.models import Deal, Product
+    from auction.models import Product
 
 logger = logging.getLogger(__name__)
 
 
 @app.task()
-def product_send_email(product_id, type):
+def product_send_email(product_id: int, type: str) -> None:
     """ посылаем письмо клиенту по продукту """
     product_model = apps.get_model("auction", "Product")
-    product = product_model.objects.get(id=product_id)
-    return product.send_email(type)
+    product: Product = product_model.objects.get(id=product_id)
+    product.send_email(type)
 
 
 @app.task()
