@@ -7,7 +7,8 @@ from django.test import TestCase
 from django.utils import timezone
 
 from auction.models import Client, Product
-from auction.tasks import product_send_email, product_try_to_make_a_deal
+from auction.tasks import (deal_finalize, product_send_email,
+                           product_try_to_make_a_deal)
 
 email_seller = "seller@test.ru"
 amount = Decimal("12.34")
@@ -70,3 +71,24 @@ class TaskProductSendEmalTestCase(TestCase):
         mock_get_model.assert_called_once_with("auction", "Product")
         mock_product_model.objects.get.assert_called_once_with(id=42)
         mock_product.send_email.assert_called_once_with("type")
+
+
+class TaskDealFinalizeTestCase(TestCase):
+    """ should finalize deal """
+
+    @patch("django.apps.apps.get_model")
+    def test_product_send_email(
+        self,
+        mock_get_model,
+    ):
+        """ should call finalize """
+        mock_deal = Mock(finalize=Mock())
+
+        mock_deal_model = Mock(objects=Mock(get=Mock(return_value=mock_deal)))
+
+        mock_get_model.return_value = mock_deal_model
+        deal_finalize(42)
+
+        mock_get_model.assert_called_once_with("auction", "Deal")
+        mock_deal_model.objects.get.assert_called_once_with(id=42)
+        mock_deal.finalize.assert_called_once_with()
