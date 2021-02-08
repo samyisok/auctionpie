@@ -2,12 +2,13 @@
 Методы для вызова из graphql
 """
 from auction.models import Bid, Product
-from auction.structures.graphql import (BidInput, ProductDeleteInput,
+from auction.structures.graphql import (BidInput, ProductActionInput,
                                         ProductInput, ProductUpdateInput)
 from core.errors import CodeError
 
 
 def create_new_product(product_input: ProductInput) -> Product:
+    """ создание товара на аукцион """
     product = Product(
         seller=product_input.seller,
         name=product_input.name,
@@ -24,6 +25,7 @@ def create_new_product(product_input: ProductInput) -> Product:
 
 
 def update_product(product_update_input: ProductUpdateInput) -> Product:
+    """ обновление данных по товару """
     product: Product = Product.objects.get(id=product_update_input.product_id)
 
     if product_update_input.seller != product.seller:
@@ -42,18 +44,25 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
         setattr(product, key, value)
 
     product.save()
-
     return product
 
 
-def activate_product():
-    pass
+def activate_product(product_action_input: ProductActionInput):
+    """ Выставление продукта на аукцион """
+    product: Product = Product.objects.get(id=product_action_input.product_id)
+
+    if product_action_input.seller != product.seller:
+        raise CodeError.WRONG_CLIENT.exception
+
+    product.activate()
+    return product
 
 
-def delete_product(product_delete_input: ProductDeleteInput):
-    product: Product = Product.objects.get(id=product_delete_input.product_id)
+def delete_product(product_action_input: ProductActionInput):
+    """ Удаление продукта """
+    product: Product = Product.objects.get(id=product_action_input.product_id)
 
-    if product_delete_input.seller != product.seller:
+    if product_action_input.seller != product.seller:
         raise CodeError.WRONG_CLIENT.exception
 
     product.delete()
@@ -61,6 +70,7 @@ def delete_product(product_delete_input: ProductDeleteInput):
 
 
 def create_bid(bid_input: BidInput) -> Bid:
+    """ Выставление новой ставки по товару """
     product = Product.objects.get(id=bid_input.product_id)
 
     bid = Bid(

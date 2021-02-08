@@ -214,4 +214,6 @@ class Product(models.Model):
         self.save()
 
         # Ставим задачу в будущие, чтобы закрыть сделку.
-        product_try_to_make_a_deal.apply_async(eta=self.end_date)
+        product_try_to_make_a_deal.apply_async(
+            args=[self.id], eta=self.end_date
+        )

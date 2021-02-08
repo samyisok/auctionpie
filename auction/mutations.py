@@ -2,7 +2,7 @@ import graphene
 from graphql_jwt.decorators import login_required
 
 from .helpers import graphql as graphql_helper
-from .structures.graphql import (BidInput, ProductDeleteInput, ProductInput,
+from .structures.graphql import (BidInput, ProductActionInput, ProductInput,
                                  ProductUpdateInput)
 from .types import BidType, ProductType
 
@@ -108,12 +108,35 @@ class DeleteProduct(graphene.Mutation):
     def mutate(self, info, product_id):
         client = info.context.user
 
-        product_delete_input = ProductDeleteInput(
+        product_delete_input = ProductActionInput(
             seller=client,
             product_id=product_id,
         )
 
         product = graphql_helper.delete_product(product_delete_input)
+        return DeleteProduct(product=product)
+
+
+class ActivateProduct(graphene.Mutation):
+    """
+    Активация продукта клиентов(выставление на аукцион)
+    """
+
+    class Arguments:
+        product_id = graphene.ID(required=True)
+
+    product = graphene.Field(ProductType)
+
+    @login_required
+    def mutate(self, info, product_id):
+        client = info.context.user
+
+        product_action_input = ProductActionInput(
+            seller=client,
+            product_id=product_id,
+        )
+
+        product = graphql_helper.activate_product(product_action_input)
         return DeleteProduct(product=product)
 
 

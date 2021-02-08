@@ -8,7 +8,7 @@ from django.utils import timezone
 from auction.helpers import graphql as graphql_helper
 from auction.models import Bid, Client, Product
 from auction.models.product import ProductStatus
-from auction.structures.graphql import (BidInput, ProductDeleteInput,
+from auction.structures.graphql import (BidInput, ProductActionInput,
                                         ProductInput, ProductUpdateInput)
 from core.errors import CodeError, GenericException
 
@@ -82,12 +82,12 @@ class HelperGraphqlDeleteProductTestCase(TestCase):
 
     def test_delete_product_success(self):
         """ should change status to deleted """
-        product_delete_input = ProductDeleteInput(
+        product_action_input = ProductActionInput(
             product_id=self.product.id, seller=self.seller
         )
 
         product = graphql_helper.delete_product(
-            product_delete_input=product_delete_input
+            product_action_input=product_action_input
         )
 
         self.assertIsNotNone(product)
@@ -100,7 +100,7 @@ class HelperGraphqlDeleteProductTestCase(TestCase):
             "another_client@another.com", "password"
         )
 
-        product_delete_input = ProductDeleteInput(
+        product_action_input = ProductActionInput(
             product_id=self.product.id, seller=another_client
         )
 
@@ -108,7 +108,47 @@ class HelperGraphqlDeleteProductTestCase(TestCase):
             GenericException, CodeError.WRONG_CLIENT.message
         ):
             graphql_helper.delete_product(
-                product_delete_input=product_delete_input
+                product_action_input=product_action_input
+            )
+
+
+class HelperGraphqlActivateProductTestCase(TestCase):
+    """ Activate product """
+
+    def setUp(self):
+        self.seller = Client.objects.create_user(email_seller, "password")
+        self.product_params = {"seller": self.seller, **product_params}
+        self.product = Product.objects.create(**self.product_params)
+
+    def test_activate_product_success(self):
+        """ should change status to deleted """
+        product_action_input = ProductActionInput(
+            product_id=self.product.id, seller=self.seller
+        )
+
+        product = graphql_helper.activate_product(
+            product_action_input=product_action_input
+        )
+
+        self.assertIsNotNone(product)
+        self.assertIsInstance(product, Product)
+        self.assertEqual(product.status, ProductStatus.ACTIVE)
+
+    def test_activate_product_should_raise_exception(self):
+        """ should raise exception if wrong user """
+        another_client: Client = Client.objects.create_user(
+            "another_client@another.com", "password"
+        )
+
+        product_action_input = ProductActionInput(
+            product_id=self.product.id, seller=another_client
+        )
+
+        with self.assertRaisesMessage(
+            GenericException, CodeError.WRONG_CLIENT.message
+        ):
+            graphql_helper.activate_product(
+                product_action_input=product_action_input
             )
 
 

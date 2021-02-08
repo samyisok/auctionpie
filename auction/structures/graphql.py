@@ -103,6 +103,8 @@ class ProductUpdateInput(Structure):
         return v
 
 
-class ProductDeleteInput(Structure):
+class ProductActionInput(Structure):
+    """ Тип для разных действий где треубется только ID """
+
     seller: Client
     product_id: int

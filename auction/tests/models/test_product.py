@@ -284,7 +284,9 @@ class ModelsProductTestCase(TestCase):
         """ should activate """
         self.product.activate()
         self.assertEqual(self.product.status, ProductStatus.ACTIVE)
-        mock_apply_deal.assert_called_once_with(eta=self.product.end_date)
+        mock_apply_deal.assert_called_once_with(
+            args=[self.product.id], eta=self.product.end_date
+        )
 
     def test_activate_raise(self):
         """ should raise exception """
