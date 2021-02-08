@@ -27,7 +27,7 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
     product: Product = Product.objects.get(id=product_update_input.product_id)
 
     if product_update_input.seller != product.seller:
-        raise CodeError.WRONG_USER.exception
+        raise CodeError.WRONG_CLIENT.exception
 
     changes: dict = {
         key: value
@@ -51,7 +51,11 @@ def activate_product():
 
 
 def delete_product(product_delete_input: ProductDeleteInput):
-    product = Product.objects.get(id=product_delete_input.product_id)
+    product: Product = Product.objects.get(id=product_delete_input.product_id)
+
+    if product_delete_input.seller != product.seller:
+        raise CodeError.WRONG_CLIENT.exception
+
     product.delete()
     return product
 

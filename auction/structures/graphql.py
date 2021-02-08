@@ -104,4 +104,5 @@ class ProductUpdateInput(Structure):
 
 
 class ProductDeleteInput(Structure):
+    seller: Client
     product_id: int

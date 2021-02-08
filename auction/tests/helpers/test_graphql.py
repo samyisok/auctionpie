@@ -81,7 +81,10 @@ class HelperGraphqlDeleteProductTestCase(TestCase):
         self.product = Product.objects.create(**self.product_params)
 
     def test_delete_product_success(self):
-        product_delete_input = ProductDeleteInput(product_id=self.product.id)
+        """ should change status to deleted """
+        product_delete_input = ProductDeleteInput(
+            product_id=self.product.id, seller=self.seller
+        )
 
         product = graphql_helper.delete_product(
             product_delete_input=product_delete_input
@@ -90,6 +93,23 @@ class HelperGraphqlDeleteProductTestCase(TestCase):
         self.assertIsNotNone(product)
         self.assertIsInstance(product, Product)
         self.assertEqual(product.status, ProductStatus.DELETED)
+
+    def test_delete_product_should_raise_exception(self):
+        """ should raise exception if wrong user """
+        another_client: Client = Client.objects.create_user(
+            "another_client@another.com", "password"
+        )
+
+        product_delete_input = ProductDeleteInput(
+            product_id=self.product.id, seller=another_client
+        )
+
+        with self.assertRaisesMessage(
+            GenericException, CodeError.WRONG_CLIENT.message
+        ):
+            graphql_helper.delete_product(
+                product_delete_input=product_delete_input
+            )
 
 
 class HelperGraphqlUpdateProductTestCase(TestCase):
@@ -142,7 +162,7 @@ class HelperGraphqlUpdateProductTestCase(TestCase):
         self.assertEqual(product.description, new_product_params["description"])
         self.assertEqual(product.name, product_params["name"])
 
-    def test_update_product_raise_wrong_user(self):
+    def test_update_product_raise_wrong_client(self):
         """ update raise error wrong user"""
         new_product_params = {
             "description": "new product desc",
@@ -159,7 +179,7 @@ class HelperGraphqlUpdateProductTestCase(TestCase):
         )
 
         with self.assertRaisesMessage(
-            GenericException, CodeError.WRONG_USER.message
+            GenericException, CodeError.WRONG_CLIENT.message
         ):
             graphql_helper.update_product(product_update_input)
 

@@ -1,9 +1,7 @@
 import graphene
-from graphql import GraphQLError
 from graphql_jwt.decorators import login_required
 
 from .helpers import graphql as graphql_helper
-from .models import Client
 from .structures.graphql import (BidInput, ProductDeleteInput, ProductInput,
                                  ProductUpdateInput)
 from .types import BidType, ProductType
@@ -36,8 +34,6 @@ class CreateProduct(graphene.Mutation):
         start_date=None,
     ):
         client = info.context.user
-        if isinstance(client, Client) is not True:
-            raise GraphQLError("Should be client model")
 
         product_input = ProductInput(
             seller=client,
@@ -82,8 +78,6 @@ class UpdateProduct(graphene.Mutation):
         start_date=None,
     ):
         client = info.context.user
-        if isinstance(client, Client) is not True:
-            raise GraphQLError("Should be client model")
 
         product_update_input = ProductUpdateInput(
             seller=client,
@@ -114,10 +108,8 @@ class DeleteProduct(graphene.Mutation):
     def mutate(self, info, product_id):
         client = info.context.user
 
-        if isinstance(client, Client) is not True:
-            raise GraphQLError("Should be client model")
-
         product_delete_input = ProductDeleteInput(
+            seller=client,
             product_id=product_id,
         )
 
