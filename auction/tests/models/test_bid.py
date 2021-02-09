@@ -92,3 +92,14 @@ class ModelsBidTestCase(TestCase):
         """ should call bid posthook from product """
         self.first_bid.post_save()
         mock_bid_posthook.assert_called_once_with()
+
+    @mock.patch("auction.models.Product.bid_posthook")
+    def test_post_save_should_rise(self, mock_bid_posthook):
+        """ should rise exception """
+        log_msg = "WARNING:auction.models.bid:failed posthook: Test Exception"
+
+        mock_bid_posthook.side_effect = Exception("Test Exception")
+
+        with self.assertLogs("auction.models.bid") as mock_log:
+            self.first_bid.post_save()
+            self.assertEqual(mock_log.output, [log_msg])
