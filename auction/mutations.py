@@ -2,8 +2,12 @@ import graphene
 from graphql_jwt.decorators import login_required
 
 from .helpers import graphql as graphql_helper
-from .structures.graphql import (BidInput, ProductActionInput, ProductInput,
-                                 ProductUpdateInput)
+from .structures.graphql import (
+    BidInput,
+    ProductActionInput,
+    ProductInput,
+    ProductUpdateInput,
+)
 from .types import BidType, ProductType
 
 

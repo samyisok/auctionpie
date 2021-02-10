@@ -1,14 +1,20 @@
 """
 Методы для вызова из graphql
 """
+from decimal import Decimal
 from typing import List
 
 from django.core.paginator import Paginator
 
 from auction.models import Bid, Product
-from auction.structures.graphql import (BidInput, IdInput, PageListInput,
-                                        ProductActionInput, ProductInput,
-                                        ProductUpdateInput)
+from auction.structures.graphql import (
+    BidInput,
+    IdInput,
+    PageListInput,
+    ProductActionInput,
+    ProductInput,
+    ProductUpdateInput,
+)
 from core.errors import CodeError
 
 
@@ -103,3 +109,10 @@ def get_product(input: IdInput) -> Product:
     получаем конкретный продукт
     """
     return Product.objects.get(id=input.id)
+
+
+def get_product_price(input: IdInput) -> Decimal:
+    """
+    получаем цену продукта
+    """
+    return Product.objects.get(id=input.id).get_final_bid_price()

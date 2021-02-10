@@ -5,8 +5,15 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
-from auction.models import (Bid, Client, ClientData, Company, Deal, DealBill,
-                            Product)
+from auction.models import (
+    Bid,
+    Client,
+    ClientData,
+    Company,
+    Deal,
+    DealBill,
+    Product,
+)
 
 
 class UserCreationForm(forms.ModelForm):

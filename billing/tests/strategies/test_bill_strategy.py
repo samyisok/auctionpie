@@ -6,9 +6,13 @@ from django.test import TestCase
 from auction.models import Client
 from billing.meta import BillStatus, BillType
 from billing.models import Bill
-from billing.strategies import (BillStrategyCommission, BillStrategyFactory,
-                                BillStrategyPrepay, BillStrategyProceeds,
-                                BillStrategySell)
+from billing.strategies import (
+    BillStrategyCommission,
+    BillStrategyFactory,
+    BillStrategyPrepay,
+    BillStrategyProceeds,
+    BillStrategySell,
+)
 from core.errors import CodeError, GenericException
 
 email = "emailfortest@test.ru"
