@@ -1,5 +1,8 @@
 import graphene
-from django.core.paginator import Paginator
+from django.core.paginator import Page
+
+from auction.helpers.graphql import get_product_list
+from auction.structures.graphql import PageListInput
 
 from .models import Product
 from .mutations import (ActivateProduct, CreateBid, CreateProduct,
@@ -19,9 +22,8 @@ class Query(graphene.ObjectType):
         """
         получаем список продуктов на аукционе
         """
-        products = Product.objects.all().order_by("id")
-        paginator = Paginator(products, page_size)
-        return paginator.page(page)
+        input: PageListInput = PageListInput(page=page, page_size=page_size)
+        return get_product_list(input=input)
 
     def resolve_product(self, info, id):
         """

@@ -104,7 +104,14 @@ class ProductUpdateInput(Structure):
 
 
 class ProductActionInput(Structure):
-    """ Тип для разных действий где треубется только ID """
+    """ Тип для разных действий где требуется только ID """
 
     seller: Client
     product_id: int
+
+
+class PageListInput(Structure):
+    """ Тип для для листинга с паджинацией, без авторизации """
+
+    page: int
+    page_size: int

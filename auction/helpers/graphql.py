@@ -1,9 +1,14 @@
 """
 Методы для вызова из graphql
 """
+from typing import List
+
+from django.core.paginator import Paginator
+
 from auction.models import Bid, Product
-from auction.structures.graphql import (BidInput, ProductActionInput,
-                                        ProductInput, ProductUpdateInput)
+from auction.structures.graphql import (BidInput, PageListInput,
+                                        ProductActionInput, ProductInput,
+                                        ProductUpdateInput)
 from core.errors import CodeError
 
 
@@ -82,3 +87,12 @@ def create_bid(bid_input: BidInput) -> Bid:
     bid.save()
     bid.post_save()
     return bid
+
+
+def get_product_list(input: PageListInput) -> List:
+    """
+    получаем список продуктов на аукционе
+    """
+    products: List[Product] = Product.objects.all().order_by("id")
+    paginator: Paginator = Paginator(products, input.page_size)
+    return paginator.page(input.page)
