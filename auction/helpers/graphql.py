@@ -6,7 +6,7 @@ from typing import List
 from django.core.paginator import Paginator
 
 from auction.models import Bid, Product
-from auction.structures.graphql import (BidInput, PageListInput,
+from auction.structures.graphql import (BidInput, IdInput, PageListInput,
                                         ProductActionInput, ProductInput,
                                         ProductUpdateInput)
 from core.errors import CodeError
@@ -96,3 +96,10 @@ def get_product_list(input: PageListInput) -> List:
     products: List[Product] = Product.objects.all().order_by("id")
     paginator: Paginator = Paginator(products, input.page_size)
     return paginator.page(input.page)
+
+
+def get_product(input: IdInput) -> Product:
+    """
+    получаем конкретный продукт
+    """
+    return Product.objects.get(id=input.id)

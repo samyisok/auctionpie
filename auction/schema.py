@@ -1,16 +1,11 @@
 import graphene
 
-from auction.helpers.graphql import get_product_list
-from auction.structures.graphql import PageListInput
+from auction.helpers.graphql import get_product, get_product_list
+from auction.structures.graphql import IdInput, PageListInput
 
 from .models import Product
-from .mutations import (
-    ActivateProduct,
-    CreateBid,
-    CreateProduct,
-    DeleteProduct,
-    UpdateProduct,
-)
+from .mutations import (ActivateProduct, CreateBid, CreateProduct,
+                        DeleteProduct, UpdateProduct)
 from .types import ProductType
 
 
@@ -33,7 +28,8 @@ class Query(graphene.ObjectType):
         """
         получаем конкретный продукт
         """
-        return Product.objects.get(id=id)
+        input: IdInput = IdInput(id=id)
+        return get_product(input=input)
 
     def resolve_product_price(self, info, id):
         """

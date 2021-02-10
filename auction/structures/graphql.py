@@ -115,3 +115,9 @@ class PageListInput(Structure):
 
     page: int
     page_size: int
+
+
+class IdInput(Structure):
+    """ Тип для queries с id """
+
+    id: int

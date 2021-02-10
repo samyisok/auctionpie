@@ -8,10 +8,20 @@ from django.utils import timezone
 from auction.helpers import graphql as graphql_helper
 from auction.models import Bid, Client, Product
 from auction.models.product import ProductStatus
-from auction.structures.graphql import (BidInput, ProductActionInput,
-                                        ProductInput, ProductUpdateInput)
-from auction.tests.fixures import (amount, email, email_seller, password,
-                                   password_seller, product_params)
+from auction.structures.graphql import (
+    BidInput,
+    ProductActionInput,
+    ProductInput,
+    ProductUpdateInput,
+)
+from auction.tests.fixtures import (
+    amount,
+    email,
+    email_seller,
+    password,
+    password_seller,
+    product_params,
+)
 from core.errors import CodeError, GenericException
 
 
