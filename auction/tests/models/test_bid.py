@@ -3,7 +3,7 @@ from unittest import mock
 from django.test import TestCase
 
 from auction.models import Bid, Client, Product
-from auction.tests.fixures import (amount, email, email_seller, password,
+from auction.tests.fixtures import (amount, email, email_seller, password,
                                    password_seller, product_params)
 from core.errors import CodeError, GenericException
 

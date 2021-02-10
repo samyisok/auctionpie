@@ -9,8 +9,14 @@ from django.utils import timezone
 
 from auction.models import Bid, Client, Deal, Product
 from auction.models.product import ProductStatus
-from auction.tests.fixures import (amount, email, email_seller, password,
-                                   password_seller, product_params)
+from auction.tests.fixtures import (
+    amount,
+    email,
+    email_seller,
+    password,
+    password_seller,
+    product_params,
+)
 from core.errors import CodeError, GenericException
 
 

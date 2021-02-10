@@ -5,7 +5,7 @@ from typing import Dict
 from graphene_django.utils.testing import GraphQLTestCase
 
 from auction.models import Client, Product
-from auction.tests.fixures import email_seller, product_params
+from auction.tests.fixtures import email_seller, product_params
 
 
 class QueriesProductListTestCase(GraphQLTestCase):

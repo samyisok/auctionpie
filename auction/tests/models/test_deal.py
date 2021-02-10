@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 from django.test import TestCase
 
 from auction.models import Client, Deal, Product
-from auction.tests.fixures import (amount_100, email, email_seller, password,
+from auction.tests.fixtures import (amount_100, email, email_seller, password,
                                    password_seller, product_params)
 from billing.models import Bill
 

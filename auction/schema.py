@@ -1,12 +1,16 @@
 import graphene
-from django.core.paginator import Page
 
 from auction.helpers.graphql import get_product_list
 from auction.structures.graphql import PageListInput
 
 from .models import Product
-from .mutations import (ActivateProduct, CreateBid, CreateProduct,
-                        DeleteProduct, UpdateProduct)
+from .mutations import (
+    ActivateProduct,
+    CreateBid,
+    CreateProduct,
+    DeleteProduct,
+    UpdateProduct,
+)
 from .types import ProductType
 
 

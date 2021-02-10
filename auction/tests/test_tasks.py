@@ -6,7 +6,7 @@ from django.test import TestCase
 from auction.models import Client, Product
 from auction.tasks import (deal_finalize, product_send_email,
                            product_try_to_make_a_deal)
-from auction.tests.fixures import email_seller, password, product_params
+from auction.tests.fixtures import email_seller, password, product_params
 
 
 class TaskProductTryToMakeADealTestCase(TestCase):
