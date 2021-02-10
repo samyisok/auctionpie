@@ -1,48 +1,35 @@
-from datetime import timedelta
-from decimal import Decimal
 from typing import List
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
-from django.utils import timezone
 
 from auction.models import Client, Deal, Product
+from auction.tests.fixures import (amount_100, email, email_seller, password,
+                                   password_seller, product_params)
 from billing.models import Bill
-
-email_buyer = "buyer@test.ru"
-email_seller = "seller@test.ru"
-amount = Decimal("100.00")
-product_params = {
-    "name": "product name",
-    "description": "product desc",
-    "start_price": Decimal(10),
-    "buy_price": Decimal(20),
-    "start_date": timezone.now(),
-    "end_date": timezone.now() + timedelta(7),
-}
 
 
 class ModelDealTestCase(TestCase):
     """Deal model"""
 
     def setUp(self):
-        self.buyer = Client.objects.create_user(email_buyer, "password")
-        self.seller = Client.objects.create_user(email_seller, "password")
+        self.buyer = Client.objects.create_user(email, password)
+        self.seller = Client.objects.create_user(email_seller, password_seller)
         self.product_params = {"seller": self.seller, **product_params}
         self.product = Product.objects.create(**self.product_params)
         self.deal = Deal.objects.create(
-            product=self.product, buyer=self.buyer, amount=amount
+            product=self.product, buyer=self.buyer, amount=amount_100
         )
 
     def test_get_commission(self):
         """ should return a commission """
         commission = self.deal.get_commission()
-        self.assertEqual(commission, amount * 30 / 100)
+        self.assertEqual(commission, amount_100 * 30 / 100)
 
     def test_get_proceeds(self):
         """ should return a proceeds """
         proceeds = self.deal.get_proceeds()
-        self.assertEqual(proceeds, amount * 70 / 100)
+        self.assertEqual(proceeds, amount_100 * 70 / 100)
 
     def test_create_bills(self):
         """ should create bills """
@@ -51,15 +38,21 @@ class ModelDealTestCase(TestCase):
         bill1, bill2, bill3 = bills
         self.assertRegex(
             str(bill1),
-            r"#\d+ sell: 100.00\(buyer@test.ru\)\(not_activated\)",
+            r"#\d+ sell: {amount}\({email}\)\(not_activated\)".format(
+                amount=amount_100, email=email
+            ),
         )
         self.assertRegex(
             str(bill2),
-            r"#\d+ proceeds: 100.00\(seller@test.ru\)\(not_activated\)",
+            r"#\d+ proceeds: {amount}\({email}\)\(not_activated\)".format(
+                amount=amount_100, email=email_seller
+            ),
         )
         self.assertRegex(
             str(bill3),
-            r"#\d+ commission: 30.00\(seller@test.ru\)\(not_activated\)",
+            r"#\d+ commission: {amount}\({email}\)\(not_activated\)".format(
+                amount=amount_100 * 30 / 100, email=email_seller
+            ),
         )
 
         # проверяем связки
@@ -67,15 +60,21 @@ class ModelDealTestCase(TestCase):
 
         self.assertRegex(
             str(bill_sell),
-            r"#\d+ sell: 100.00\(buyer@test.ru\)\(not_activated\)",
+            r"#\d+ sell: {amount}\({email}\)\(not_activated\)".format(
+                amount=amount_100, email=email
+            ),
         )
         self.assertRegex(
             str(bill_proceeds),
-            r"#\d+ proceeds: 100.00\(seller@test.ru\)\(not_activated\)",
+            r"#\d+ proceeds: {amount}\({email}\)\(not_activated\)".format(
+                amount=amount_100, email=email_seller
+            ),
         )
         self.assertRegex(
             str(bill_commission),
-            r"#\d+ commission: 30.00\(seller@test.ru\)\(not_activated\)",
+            r"#\d+ commission: {amount}\({email}\)\(not_activated\)".format(
+                amount=amount_100 * 30 / 100, email=email_seller
+            ),
         )
 
     @patch("auction.models.Deal.create_bills")

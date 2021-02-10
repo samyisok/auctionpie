@@ -4,8 +4,11 @@ from decimal import Decimal
 from django.utils import timezone
 
 email = "emailfortest@test.ru"
+password = "password"
 email_seller = "seller@test.ru"
+password_seller = "password"
 amount = Decimal("12.34")
+amount_100 = Decimal("100.00")
 product_params = {
     "name": "product name",
     "description": "product desc",

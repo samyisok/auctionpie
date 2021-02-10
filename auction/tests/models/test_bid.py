@@ -1,32 +1,19 @@
-from datetime import timedelta
-from decimal import Decimal
 from unittest import mock
 
 from django.test import TestCase
-from django.utils import timezone
 
 from auction.models import Bid, Client, Product
+from auction.tests.fixures import (amount, email, email_seller, password,
+                                   password_seller, product_params)
 from core.errors import CodeError, GenericException
-
-email = "emailfortest@test.ru"
-email_seller = "seller@test.ru"
-amount = Decimal("12.34")
-product_params = {
-    "name": "product name",
-    "description": "product desc",
-    "start_price": Decimal(10),
-    "buy_price": Decimal(20),
-    "start_date": timezone.now(),
-    "end_date": timezone.now() + timedelta(7),
-}
 
 
 class ModelsBidTestCase(TestCase):
     """bid test"""
 
     def setUp(self):
-        self.client = Client.objects.create_user(email, "password")
-        self.seller = Client.objects.create_user(email_seller, "password")
+        self.client = Client.objects.create_user(email, password)
+        self.seller = Client.objects.create_user(email_seller, password_seller)
         self.product_params = {"seller": self.seller, **product_params}
         self.product = Product.objects.create(**self.product_params)
         self.first_bid = Bid.objects.create(

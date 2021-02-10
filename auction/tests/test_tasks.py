@@ -1,32 +1,19 @@
-from datetime import timedelta
-from decimal import Decimal
 from unittest.mock import Mock, patch
 
 from celery.exceptions import Retry
 from django.test import TestCase
-from django.utils import timezone
 
 from auction.models import Client, Product
 from auction.tasks import (deal_finalize, product_send_email,
                            product_try_to_make_a_deal)
-
-email_seller = "seller@test.ru"
-amount = Decimal("12.34")
-product_params = {
-    "name": "product name",
-    "description": "product desc",
-    "start_price": Decimal(10),
-    "buy_price": Decimal(20),
-    "start_date": timezone.now(),
-    "end_date": timezone.now() + timedelta(7),
-}
+from auction.tests.fixures import email_seller, password, product_params
 
 
 class TaskProductTryToMakeADealTestCase(TestCase):
     """ product_try_to_make_a_deal """
 
     def setUp(self):
-        self.seller = Client.objects.create_user(email_seller, "password")
+        self.seller = Client.objects.create_user(email_seller, password)
         self.product_params = {"seller": self.seller, **product_params}
         self.product = Product.objects.create(**self.product_params)
 

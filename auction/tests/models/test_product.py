@@ -9,7 +9,8 @@ from django.utils import timezone
 
 from auction.models import Bid, Client, Deal, Product
 from auction.models.product import ProductStatus
-from auction.tests.fixures import amount, email, email_seller, product_params
+from auction.tests.fixures import (amount, email, email_seller, password,
+                                   password_seller, product_params)
 from core.errors import CodeError, GenericException
 
 
@@ -17,9 +18,9 @@ class ModelsProductTestCase(TestCase):
     """product model test"""
 
     def setUp(self):
-        self.client: Client = Client.objects.create_user(email, "password")
+        self.client: Client = Client.objects.create_user(email, password)
         self.seller: Client = Client.objects.create_user(
-            email_seller, "password"
+            email_seller, password_seller
         )
         self.product_params: Dict = {"seller": self.seller, **product_params}
         self.product: Product = Product.objects.create(**self.product_params)
