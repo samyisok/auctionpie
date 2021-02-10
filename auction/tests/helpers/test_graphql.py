@@ -120,7 +120,8 @@ class HelperGraphqlActivateProductTestCase(TestCase):
         self.product_params = {"seller": self.seller, **product_params}
         self.product = Product.objects.create(**self.product_params)
 
-    def test_activate_product_success(self):
+    @mock.patch("auction.models.product.product_try_to_make_a_deal.apply_async")
+    def test_activate_product_success(self, mock_apply_async):
         """ should change status to deleted """
         product_action_input = ProductActionInput(
             product_id=self.product.id, seller=self.seller
