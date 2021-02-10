@@ -34,7 +34,6 @@ class Query(graphene.ObjectType):
         получаем цену продукта
         """
         price = Product.objects.get(id=id).get_final_bid_price()
-        print(price)
         return price
 
 

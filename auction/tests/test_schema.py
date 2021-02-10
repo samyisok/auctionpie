@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from typing import Dict
 
 from graphene_django.utils.testing import GraphQLTestCase
@@ -41,15 +42,6 @@ class QueriesProductListTestCase(GraphQLTestCase):
         ]
         self.assertListEqual(data, expected)
 
-
-class QueriesProductTestCase(GraphQLTestCase):
-    def setUp(self):
-        self.seller: Client = Client.objects.create_user(
-            email_seller, "password"
-        )
-        self.product_params: Dict = {"seller": self.seller, **product_params}
-        self.product: Product = Product.objects.create(**self.product_params)
-
     def test_product(self):
         """ should get a concrete product"""
         response = self.query(
@@ -76,3 +68,21 @@ class QueriesProductTestCase(GraphQLTestCase):
         }
 
         self.assertDictEqual(data, expected)
+
+    def test_product_price(self):
+        """ should get a product price"""
+        response = self.query(
+            """
+            query productPrice($id: ID!){
+                productPrice(id: $id)
+            }
+            """,
+            op_name="productPrice",
+            variables={"id": self.product.id},
+        )
+
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        self.assertEqual(
+            Decimal(content["data"]["productPrice"]), self.product.start_price
+        )
