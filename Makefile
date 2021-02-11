@@ -17,3 +17,10 @@ coverage:
 	docker exec django bash -c 'coverage report && coverage html'
 
 restart: stop start
+
+readme:
+	cat ./doc/README-header.rst > ./README.rst
+	python ./doc/get_introspection.py >> ./README.rst
+	echo "Test coverage" >> ./README.rst
+	echo "=============" >> ./README.rst
+	docker exec django bash -c 'coverage report' >> ./README.rst
