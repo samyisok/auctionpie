@@ -318,3 +318,12 @@ class ModelsProductTestCase(TestCase):
             GenericException, CodeError.ALREADY_ACTIVATED.message
         ):
             self.product.activate()
+
+    @mock.patch("auction.models.product.product_send_email.delay")
+    def test_async_send_email(self, mock_delay):
+        """ should call delay """
+        type = "test"
+        self.product.async_send_email(type)
+        mock_delay.assert_called_once_with(
+            product_id=self.product.id, type=type
+        )
