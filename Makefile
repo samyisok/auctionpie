@@ -23,5 +23,5 @@ readme:
 	python ./doc/get_introspection.py >> ./README.rst
 	echo "Test coverage" >> ./README.rst
 	echo "=============" >> ./README.rst
-	echo '::' >> ./README.rst
+	echo '' >> ./README.rst
 	docker exec django bash -c 'coverage report'| sed -e 's/^/   /g' >> ./README.rst

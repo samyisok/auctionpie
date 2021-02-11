@@ -20,7 +20,7 @@ Graphq list of queries and mutations:
 
 Test coverage
 =============
-::
+
    Name                             Stmts   Miss Branch BrPart  Cover
    ------------------------------------------------------------------
    auction/__init__.py                  0      0      0      0   100%
