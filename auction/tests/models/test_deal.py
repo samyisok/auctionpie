@@ -27,6 +27,12 @@ class ModelDealTestCase(TestCase):
             product=self.product, buyer=self.buyer, amount=amount_100
         )
 
+    def test_str(self):
+        """ should return str """
+        self.assertEqual(
+            str(self.deal), f"{product_params['name']}: {amount_100}"
+        )
+
     def test_get_commission(self):
         """ should return a commission """
         commission = self.deal.get_commission()
