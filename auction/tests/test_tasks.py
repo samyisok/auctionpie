@@ -6,6 +6,7 @@ from django.test import TestCase
 from auction.models import Client, Product
 from auction.tasks import (
     deal_finalize,
+    deal_send_email,
     product_send_email,
     product_try_to_make_a_deal,
 )
@@ -82,3 +83,13 @@ class TaskDealFinalizeTestCase(TestCase):
         mock_get_model.assert_called_once_with("auction", "Deal")
         mock_deal_model.objects.get.assert_called_once_with(id=42)
         mock_deal.finalize.assert_called_once_with()
+
+
+class TaskDealSendEmailTestCase(TestCase):
+    """ should send email """
+
+    def test_deal_send_email(self):
+        """ should get nothing not implemented yet """
+        deal = None
+        type = None
+        self.assertIsNone(deal_send_email(deal, type))
