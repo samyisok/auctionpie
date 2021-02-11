@@ -204,8 +204,34 @@ class ModelsProductTestCase(TestCase):
         ) as mock_log:
             self.product.bid_posthook()
             mock_is_ready.assert_called_once_with()
+            mock_a_deal.assert_called_once_with()
             deal.async_finalize.assert_called_once_with()
             self.assertEqual(mock_log.output, [log_msg1, log_msg2])
+
+    @mock.patch(
+        "auction.models.Product.is_ready_to_make_a_deal", return_value=False
+    )
+    @mock.patch(
+        "auction.models.Product.make_a_deal",
+    )
+    def test_bid_posthook_not_ready_make_deal(self, mock_a_deal, mock_is_ready):
+        """ should does not call make_a_deal """
+        deal = mock.Mock(spec=Deal)
+        deal.async_finalize = mock.Mock()
+        mock_a_deal.return_value = deal
+
+        log_msg1 = (
+            f"INFO:auction.models.product:attemp make a deal for {self.product}"
+        )
+
+        with self.assertLogs(
+            "auction.models.product", level="INFO"
+        ) as mock_log:
+            self.product.bid_posthook()
+            mock_is_ready.assert_called_once_with()
+            mock_a_deal.assert_not_called()
+            deal.async_finalize.assert_not_called()
+            self.assertEqual(mock_log.output, [log_msg1])
 
     def test_clean_raise_exception_active(self):
         """ should return raise exception if end_date not defined """
