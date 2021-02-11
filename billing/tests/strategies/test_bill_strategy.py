@@ -239,3 +239,11 @@ class BillStrategyFactoryTestCase(TestCase, PrecreateMixin):
         """ should get correct strategy instance """
         strategy = BillStrategyFactory.get_strategy(self.bill_proceeds)
         self.assertIsInstance(strategy, BillStrategyProceeds)
+
+    @patch("billing.strategies.BillStrategyFactory.strategies", return_value=[])
+    def test_get_strategy_raise(self, mock_strategies):
+        """ should raise value error """
+        with self.assertRaisesMessage(
+            ValueError, "Suitable strategy not found"
+        ):
+            BillStrategyFactory.get_strategy(self.bill_proceeds)
