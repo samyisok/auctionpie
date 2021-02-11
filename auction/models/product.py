@@ -151,8 +151,6 @@ class Product(models.Model):
         проверяем условия закрытия сделки по времени.
         чтобы закрыть сделку, текущее время должно больше end_date
         """
-        if self.end_date is None:
-            return False
 
         return self.end_date <= timezone.now()
 
