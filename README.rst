@@ -20,37 +20,38 @@ Graphq list of queries and mutations:
 
 Test coverage
 =============
-Name                             Stmts   Miss Branch BrPart  Cover
-------------------------------------------------------------------
-auction/__init__.py                  0      0      0      0   100%
-auction/admin.py                    52     11      6      0    74%
-auction/helpers/__init__.py          0      0      0      0   100%
-auction/helpers/graphql.py          48      0     12      0   100%
-auction/models/__init__.py           6      0      0      0   100%
-auction/models/base.py               7      0      0      0   100%
-auction/models/bid.py               38      0      2      0   100%
-auction/models/client.py            70     14      2      1    79%
-auction/models/client_data.py       17      0      0      0   100%
-auction/models/company.py           11      0      0      0   100%
-auction/models/deal.py              38      0      2      0   100%
-auction/models/product.py           98      0     22      0   100%
-auction/mutations.py                67     20      0      0    70%
-auction/schema.py                   25      0      0      0   100%
-auction/structures/__init__.py       0      0      0      0   100%
-auction/structures/graphql.py       86     10     20     10    81%
-auction/tasks.py                    29      1      2      0    97%
-auction/types.py                    15      0      0      0   100%
-billing/__init__.py                  0      0      0      0   100%
-billing/admin.py                     4      0      0      0   100%
-billing/meta.py                     15      0      0      0   100%
-billing/models/__init__.py           2      0      0      0   100%
-billing/models/bill.py              33      0      0      0   100%
-billing/models/transaction.py       53      0     10      0   100%
-billing/strategies.py               51      0      8      0   100%
-billing/tasks.py                     7      0      0      0   100%
-core/__init__.py                     2      0      0      0   100%
-core/celery.py                       7      0      0      0   100%
-core/errors.py                      27      0      0      0   100%
-core/schema.py                      16      0      0      0   100%
-------------------------------------------------------------------
-TOTAL                              824     56     86     11    92%
+::
+   Name                             Stmts   Miss Branch BrPart  Cover
+   ------------------------------------------------------------------
+   auction/__init__.py                  0      0      0      0   100%
+   auction/admin.py                    52     11      6      0    74%
+   auction/helpers/__init__.py          0      0      0      0   100%
+   auction/helpers/graphql.py          48      0     12      0   100%
+   auction/models/__init__.py           6      0      0      0   100%
+   auction/models/base.py               7      0      0      0   100%
+   auction/models/bid.py               38      0      2      0   100%
+   auction/models/client.py            70     14      2      1    79%
+   auction/models/client_data.py       17      0      0      0   100%
+   auction/models/company.py           11      0      0      0   100%
+   auction/models/deal.py              38      0      2      0   100%
+   auction/models/product.py           98      0     22      0   100%
+   auction/mutations.py                67     20      0      0    70%
+   auction/schema.py                   25      0      0      0   100%
+   auction/structures/__init__.py       0      0      0      0   100%
+   auction/structures/graphql.py       86     10     20     10    81%
+   auction/tasks.py                    29      1      2      0    97%
+   auction/types.py                    15      0      0      0   100%
+   billing/__init__.py                  0      0      0      0   100%
+   billing/admin.py                     4      0      0      0   100%
+   billing/meta.py                     15      0      0      0   100%
+   billing/models/__init__.py           2      0      0      0   100%
+   billing/models/bill.py              33      0      0      0   100%
+   billing/models/transaction.py       53      0     10      0   100%
+   billing/strategies.py               51      0      8      0   100%
+   billing/tasks.py                     7      0      0      0   100%
+   core/__init__.py                     2      0      0      0   100%
+   core/celery.py                       7      0      0      0   100%
+   core/errors.py                      27      0      0      0   100%
+   core/schema.py                      16      0      0      0   100%
+   ------------------------------------------------------------------
+   TOTAL                              824     56     86     11    92%
