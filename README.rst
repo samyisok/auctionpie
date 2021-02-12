@@ -31,7 +31,7 @@ Test coverage
   auction/models/__init__.py           6      0      0      0   100%
   auction/models/base.py               7      0      0      0   100%
   auction/models/bid.py               38      0      2      0   100%
-  auction/models/client.py            70     14      2      1    79%
+  auction/models/client.py            74      0      2      0   100%
   auction/models/client_data.py       17      0      0      0   100%
   auction/models/company.py           11      0      0      0   100%
   auction/models/deal.py              38      0      2      0   100%
@@ -40,7 +40,7 @@ Test coverage
   auction/schema.py                   25      0      0      0   100%
   auction/structures/__init__.py       0      0      0      0   100%
   auction/structures/graphql.py       86     10     20     10    81%
-  auction/tasks.py                    29      1      2      0    97%
+  auction/tasks.py                    29      0      2      0   100%
   auction/types.py                    15      0      0      0   100%
   billing/__init__.py                  0      0      0      0   100%
   billing/admin.py                     4      0      0      0   100%
@@ -55,4 +55,4 @@ Test coverage
   core/errors.py                      27      0      0      0   100%
   core/schema.py                      16      0      0      0   100%
   ------------------------------------------------------------------
-  TOTAL                              824     56     86     11    92%
+  TOTAL                              828     41     86     10    94%
