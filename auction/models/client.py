@@ -116,14 +116,14 @@ class AbstractClient(AbstractBaseUser):
         return self.is_admin
 
 
-class Client(AbstractClient):
-    FACES = [
-        (1, "Физ лицо"),
-        (2, "Юр лицо"),
-        (3, "ИП"),
-        (4, "Бюджет"),
-    ]
+class FaceTypes(models.TextChoices):
+    IND = 1, "Физ лицо"
+    LTD = 2, "Юр лицо"
+    ENT = 3, "ИП"
+    GOV = 4, "Бюджет"
 
+
+class Client(AbstractClient):
     email = models.CharField(max_length=128, unique=True)
     password = models.CharField(max_length=128)
     cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
@@ -132,8 +132,8 @@ class Client(AbstractClient):
         Company, on_delete=models.CASCADE, default=settings.DEFAULT_COMPANY
     )
     face_id = models.IntegerField(
-        choices=FACES,
-        default=1,
+        choices=FaceTypes.choices,
+        default=FaceTypes.IND,
     )
     last_login = models.DateTimeField(blank=True, null=True)
 
