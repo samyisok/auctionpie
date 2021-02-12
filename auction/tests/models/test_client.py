@@ -65,7 +65,7 @@ class ModelsClientManagerTestCase(TestCase):
         result = Client.objects.normalize_email(email)
         self.assertEqual(result, "TEST@email.com")
 
-    def test_normalize_emai_raise(self):
+    def test_normalize_email_raise(self):
         """ should return raise ValueError if uncorrect """
         email = "uncorrect"
         with self.assertRaisesMessage(ValueError, "Uncorrect email"):
