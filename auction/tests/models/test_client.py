@@ -71,6 +71,13 @@ class ModelsClientManagerTestCase(TestCase):
         with self.assertRaisesMessage(ValueError, "Uncorrect email"):
             Client.objects.normalize_email(email)
 
+
+class ModelsClientTestCase(TestCase):
+    """ model client test """
+
+    def setUp(self):
+        self.client: Client = Client(email=email, password=password)
+
     @patch("django.contrib.auth.models.AbstractBaseUser.clean")
     @patch(
         "auction.models.client.ClientManager.normalize_email",
@@ -80,15 +87,45 @@ class ModelsClientManagerTestCase(TestCase):
         self, mock_normalize_email: MagicMock, mock_clean: MagicMock
     ):
         """ should call normalize_email and super """
-        client: Client = Client(email=email, password=password)
-        client.clean()
+        self.client.clean()
         mock_clean.assert_called_once_with()
         mock_normalize_email.assert_called_once_with(email)
 
     @patch("auction.models.client.send_mail")
-    def test_email_user(email, mock_send_mail: MagicMock):
+    def test_email_user(self, mock_send_mail: MagicMock):
         """ should email user """
         args = ["subject", "message", "from@company.ru"]
-        client: Client = Client(email=email, password=password)
-        client.email_user(*args)
+        self.client.email_user(*args)
         mock_send_mail.assert_called_once_with(*args, [email])
+
+    def test_str(self):
+        """ should return email """
+        self.assertEqual(str(self.client), email)
+
+    def test_has_perm(self):
+        """ should return is_admin True """
+        self.client.is_admin = True
+        self.client.save()
+        self.assertTrue(self.client.has_perm("perm_name"))
+
+    def test_has_module_perms(self):
+        """ should return is_admin True """
+        self.client.is_admin = True
+        self.client.save()
+        self.assertTrue(self.client.has_module_perms("billing"))
+
+    def test_is_staff(self):
+        """ should return is_admin True """
+        self.client.is_admin = True
+        self.client.save()
+        self.assertTrue(self.client.is_staff)
+
+    def test_is_superuser(self):
+        """ should return is_admin True """
+        self.client.is_admin = True
+        self.client.save()
+        self.assertTrue(self.client.is_superuser)
+
+    def test_vat(self):
+        """ should return company vat """
+        self.assertEqual(self.client.vat, self.client.company.vat)
