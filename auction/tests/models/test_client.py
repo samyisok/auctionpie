@@ -70,3 +70,17 @@ class ModelsClientManagerTestCase(TestCase):
         email = "uncorrect"
         with self.assertRaisesMessage(ValueError, "Uncorrect email"):
             Client.objects.normalize_email(email)
+
+    @patch("django.contrib.auth.models.AbstractBaseUser.clean")
+    @patch(
+        "auction.models.client.ClientManager.normalize_email",
+        return_value=email,
+    )
+    def test_clean(
+        self, mock_normalize_email: MagicMock, mock_clean: MagicMock
+    ):
+        """ should call normalize_email and super """
+        client: Client = Client(email=email, password=password)
+        client.clean()
+        mock_clean.assert_called_once()
+        mock_normalize_email.assert_called_once_with(email)
