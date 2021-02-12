@@ -82,5 +82,13 @@ class ModelsClientManagerTestCase(TestCase):
         """ should call normalize_email and super """
         client: Client = Client(email=email, password=password)
         client.clean()
-        mock_clean.assert_called_once()
+        mock_clean.assert_called_once_with()
         mock_normalize_email.assert_called_once_with(email)
+
+    @patch("auction.models.client.send_mail")
+    def test_email_user(email, mock_send_mail: MagicMock):
+        """ should email user """
+        args = ["subject", "message", "from@company.ru"]
+        client: Client = Client(email=email, password=password)
+        client.email_user(*args)
+        mock_send_mail.assert_called_once_with(*args, [email])
