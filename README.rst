@@ -6,6 +6,8 @@ Django Graphql Auction Backend(with celery)
 
 Graphq list of queries and mutations:
 =====================================
+Mutations:
+----------
  - Register: Register user with fields defined in the settings.
  - VerifyAccount: Verify user account.
  - ObtainJSONWebToken: Obtain JSON web token for given user.
@@ -17,6 +19,12 @@ Graphq list of queries and mutations:
  - DeleteProduct: Отмена продукта
  - UpdateProduct: Изменение продукта
  - ActivateProduct: Активация продукта клиента(выставление на аукцион)
+Queries:
+--------
+ - balance: Получаем баланс клиента
+ - productList: Получаем список продуктов на аукционе
+ - product: Получаем конкретный продукт
+ - productPrice: Получаем цену конкретного продукта
 
 Test coverage
 =============

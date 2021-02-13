@@ -21,14 +21,27 @@ body = """
 
 result = run_query(body)
 
+queries = next(
+    filter(
+        lambda obj: obj["name"] == "Query", result["data"]["__schema"]["types"]
+    )
+)
+
 # готовим часть документации
 print("\nGraphq list of queries and mutations:")
 print("=====================================")
+print("Mutations:")
+print("----------")
 for type in result["data"]["__schema"]["types"]:
     if (
         type["kind"] == "OBJECT"
         and type["description"]
         and not type["name"].startswith("__")
     ):
+        print(f" - {type['name']}: {type['description'].splitlines()[0]}")
+print("Queries:")
+print("--------")
+for type in queries["fields"]:
+    if type["description"]:
         print(f" - {type['name']}: {type['description'].splitlines()[0]}")
 print("")

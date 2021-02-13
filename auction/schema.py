@@ -19,13 +19,28 @@ from .types import ProductType
 
 class Query(graphene.ObjectType):
     product_list = graphene.List(
-        ProductType, page=graphene.Int(), page_size=graphene.Int()
+        ProductType,
+        page=graphene.Int(),
+        page_size=graphene.Int(),
+        description="Получаем список продуктов на аукционе",
     )
 
-    product = graphene.Field(ProductType, id=graphene.ID(required=True))
-    product_price = graphene.Decimal(id=graphene.ID(required=True))
+    product = graphene.Field(
+        ProductType,
+        id=graphene.ID(required=True),
+        description="Получаем конкретный продукт",
+    )
+    product_price = graphene.Decimal(
+        id=graphene.ID(required=True),
+        description="Получаем цену конкретного продукта",
+    )
 
-    def resolve_product_list(self, info, page=1, page_size=10):
+    def resolve_product_list(
+        self,
+        info,
+        page=1,
+        page_size=10,
+    ):
         """
         Получаем список продуктов на аукционе
         """

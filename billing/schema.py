@@ -6,7 +6,7 @@ from billing.structures.graphql import ClientInput
 
 
 class Query(graphene.ObjectType):
-    balance = graphene.Decimal()
+    balance = graphene.Decimal(description="Получаем баланс клиента")
 
     @login_required
     def resolve_balance(self, info):

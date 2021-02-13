@@ -20,7 +20,7 @@ restart: stop start
 
 readme:
 	cat ./doc/README-header.rst > ./README.rst
-	python ./doc/get_introspection.py >> ./README.rst
+	python ./doc/get_graphql_doc.py >> ./README.rst
 	echo "Test coverage" >> ./README.rst
 	echo "=============" >> ./README.rst
 	echo '::' >> ./README.rst
