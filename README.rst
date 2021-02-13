@@ -13,10 +13,10 @@ Graphq list of queries and mutations:
  - RefreshToken: Same as `grapgql_jwt` implementation, with standard output.
  - RevokeToken: Same as `grapgql_jwt` implementation, with standard output.
  - CreateProduct: Создание и выставление продукта на аукцион.
- - CreateBid: создание ставки на товар
+ - CreateBid: Создание ставки на товар
  - DeleteProduct: Отмена продукта
  - UpdateProduct: Изменение продукта
- - ActivateProduct: Активация продукта клиентов(выставление на аукцион)
+ - ActivateProduct: Активация продукта клиента(выставление на аукцион)
 
 Test coverage
 =============
@@ -44,15 +44,20 @@ Test coverage
   auction/types.py                    15      0      0      0   100%
   billing/__init__.py                  0      0      0      0   100%
   billing/admin.py                     4      0      0      0   100%
+  billing/helpers/__init__.py          0      0      0      0   100%
+  billing/helpers/graphql.py           5      0      0      0   100%
   billing/meta.py                     15      0      0      0   100%
   billing/models/__init__.py           2      0      0      0   100%
   billing/models/bill.py              33      0      0      0   100%
   billing/models/transaction.py       53      0     10      0   100%
+  billing/schema.py                   12      3      0      0    75%
   billing/strategies.py               51      0      8      0   100%
+  billing/structures/__init__.py       0      0      0      0   100%
+  billing/structures/graphql.py        7      0      0      0   100%
   billing/tasks.py                     7      0      0      0   100%
   core/__init__.py                     2      0      0      0   100%
   core/celery.py                       7      0      0      0   100%
   core/errors.py                      27      0      0      0   100%
-  core/schema.py                      16      0      0      0   100%
+  core/schema.py                      17      0      0      0   100%
   ------------------------------------------------------------------
-  TOTAL                              828     41     86     10    94%
+  TOTAL                              853     44     86     10    94%

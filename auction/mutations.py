@@ -123,7 +123,7 @@ class DeleteProduct(graphene.Mutation):
 
 class ActivateProduct(graphene.Mutation):
     """
-    Активация продукта клиентов(выставление на аукцион)
+    Активация продукта клиента(выставление на аукцион)
     """
 
     class Arguments:
@@ -146,7 +146,7 @@ class ActivateProduct(graphene.Mutation):
 
 class CreateBid(graphene.Mutation):
     """
-    создание ставки на товар
+    Создание ставки на товар
     """
 
     class Arguments:

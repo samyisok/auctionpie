@@ -27,21 +27,21 @@ class Query(graphene.ObjectType):
 
     def resolve_product_list(self, info, page=1, page_size=10):
         """
-        получаем список продуктов на аукционе
+        Получаем список продуктов на аукционе
         """
         input: PageListInput = PageListInput(page=page, page_size=page_size)
         return get_product_list(input=input)
 
     def resolve_product(self, info, id):
         """
-        получаем конкретный продукт
+        Получаем конкретный продукт
         """
         input: IdInput = IdInput(id=id)
         return get_product(input=input)
 
     def resolve_product_price(self, info, id):
         """
-        получаем цену продукта
+        Получаем цену продукта
         """
         input: IdInput = IdInput(id=id)
         return get_product_price(input=input)
