@@ -26,3 +26,7 @@ readme:
 	echo '::' >> ./README.rst
 	echo '' >> ./README.rst
 	docker exec django bash -c 'coverage report'| sed -e 's/^/  /g' >> ./README.rst
+
+
+migration:
+	docker exec django bash -c 'python manage.py makemigrations && python manage.py migrate'

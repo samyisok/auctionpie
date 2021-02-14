@@ -4,27 +4,15 @@ from typing import TYPE_CHECKING
 
 from django.apps import apps
 from django.db import models
-from django.utils import timezone
 
 from auction.models import Client
 from billing.meta import BillStatus, BillType
+from billing.models.base import ModelAbstract
 from billing.strategies import BillStrategyFactory
 from billing.tasks import bill_activate
 
 if TYPE_CHECKING:
     from billing.models import Transaction
-
-
-class ModelAbstract(models.Model):
-    cdate = models.DateTimeField("Дата создания", default=timezone.now)
-    mdate = models.DateTimeField(
-        "Дата изменения",
-        auto_now=True,
-        auto_now_add=False,
-    )
-
-    class Meta:
-        abstract = True
 
 
 class Bill(ModelAbstract):
