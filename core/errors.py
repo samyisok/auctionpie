@@ -16,6 +16,7 @@ class CodeError(Enum):
     ALREADY_SOLDED = "Already solded"
     ALREADY_ACTIVATED = "Already activated"
     WRONG_TYPE = "Wrong type"
+    WRONG_STATUS = "Wrong status"
     ALREADY_HAS_HIGHER_BID = "Already has higher bid"
     AMOUNT_SHOULD_BE_POSITIVE = "Amount param should be postive"
     NOT_ENOUGH_BALANCE = "Not enough amount on balance"

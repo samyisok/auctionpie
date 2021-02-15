@@ -41,3 +41,20 @@ class TransactionType(models.TextChoices):
         "cancellation",
         "Пополнение счета, средствами с отмены списания",
     )
+
+
+class PaymentStatus(models.TextChoices):
+    NOT_PAYED = "not_payed", "Не оплачен"
+    PAYED = "payed", "Оплачен"
+    PARTPAYED = "partpayed", "Частично оплачен"
+    PENDING = "pending", "Ждем подтверждения оплаты"
+    FAILED = "failed", "Оплата не успешна"
+    CANCELLED = "cancelled", "Оплата отмененна"
+
+
+class PaymentSystem(models.TextChoices):
+    """
+    Платежные системы, например YooKassa, robokassa, Банковские платежи.
+    """
+
+    DUMMY = "dummy", "Псевдо платежная система"
