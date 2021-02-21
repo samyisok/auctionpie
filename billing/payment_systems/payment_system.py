@@ -10,9 +10,14 @@ if TYPE_CHECKING:
 class AbastactPaymentSystemResult(ABC):
     payment_system: AbstractPaymentSystem
 
-    @abstractmethod
+    @abstractproperty
     def is_confirm_avalible(self) -> bool:
         """ Проверяем доступен ли confirm ПС """
+        ...
+
+    @abstractproperty
+    def is_invoice_avalible(self) -> bool:
+        """ некоторые платежные системы могут отдавать инвойс """
         ...
 
     @abstractproperty
@@ -24,8 +29,20 @@ class AbastactPaymentSystemResult(ABC):
         ...
 
     @abstractproperty
+    def invoice(self) -> str:
+        """
+        инвойс в base64
+        """
+        ...
+
+    @abstractproperty
     def is_failed(self) -> bool:
         """ Платеж не успешен """
+        ...
+
+    @abstractproperty
+    def is_pending(self) -> bool:
+        """ платеж еще выполняется """
         ...
 
 
@@ -59,4 +76,9 @@ class AbstractPaymentSystem(ABC):
     @abstractclassmethod
     def is_confirm_avalible(cls) -> bool:
         """ Confirming_url доступен ли для этой ПС """
+        ...
+
+    @abstractclassmethod
+    def is_invoice_avalible(cls) -> bool:
+        """ инвойс доступен ли для этой ПС """
         ...

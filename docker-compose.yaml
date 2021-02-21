@@ -52,6 +52,7 @@ services:
       - .:/code
     env_file:
       - ./env.django.local
+      - ./env.django.secret
       - ./env.postgres.local
     networks:
       - auctionpie-net

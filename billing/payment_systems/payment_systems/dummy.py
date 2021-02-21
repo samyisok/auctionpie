@@ -19,11 +19,21 @@ class DummyPaymentSystemResult(AbastactPaymentSystemResult):
     def is_confirm_avalible(self) -> bool:
         return self.payment_system.is_confirm_avalible()
 
+    def is_invoice_avalible(self) -> bool:
+        return self.payment_system.is_invoice_avalible()
+
+    def invoice(self) -> str:
+        return ""
+
     def confirm_url(self) -> str:
         return ""
 
     def is_failed(self) -> bool:
         """ Платеж не успешен """
+        return False
+
+    def is_pending(self) -> bool:
+        """ dummy всегда готов """
         return False
 
 
@@ -58,4 +68,9 @@ class DummyPaymentSystem(AbstractPaymentSystem):
     @classmethod
     def is_confirm_avalible(cls) -> bool:
         """ Урл подвтерждения не доступен """
+        return False
+
+    @classmethod
+    def is_invoice_avalible(cls) -> bool:
+        """ инвойс не доступен """
         return False
