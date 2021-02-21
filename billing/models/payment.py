@@ -59,9 +59,14 @@ class Payment(ModelAbstract):
         on_delete=models.CASCADE,
         null=True,
     )
+    description = models.TextField("Описание платежа")
 
     class Meta:
         indexes = [models.Index(fields=["order_id"])]
+
+    @property
+    def payment_system_instance(self) -> AbstractPaymentSystem:
+        return PaymentSystemFactory.get_payment_system(self)
 
     def process_payment(self) -> None:
         """
@@ -72,11 +77,8 @@ class Payment(ModelAbstract):
 
         Платеж переидет в статус pending, так как будет ждать пользователя.
         """
-        payment_system: AbstractPaymentSystem = (
-            PaymentSystemFactory.get_payment_system(self)
-        )
 
-        payment_system.process_payment()
+        self.payment_system_instance.process_payment()
 
     def process_request(self):
         """
@@ -85,11 +87,8 @@ class Payment(ModelAbstract):
         Как правило в реквесте будет подтвеждение платежа.
         и далее подтвеждаем платеж или проверяем что платеж завершился ошибкой.
         """
-        payment_system: AbstractPaymentSystem = (
-            PaymentSystemFactory.get_payment_system(self)
-        )
 
-        payment_system.process_request()
+        self.payment_system_instance.process_request()
 
     def set_payed(self, amount: Decimal) -> None:
         """

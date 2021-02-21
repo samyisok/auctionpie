@@ -20,16 +20,16 @@ class AbastactPaymentSystemResult(ABC):
         """ некоторые платежные системы могут отдавать инвойс """
         ...
 
-    @abstractproperty
-    def confirm_url(self) -> str:
+    @abstractmethod
+    def get_confirm_url(self) -> str:
         """
         Урл для подтверждения платежа,
         может не существовать для некоторых ПС
         """
         ...
 
-    @abstractproperty
-    def invoice(self) -> str:
+    @abstractmethod
+    def get_invoice(self) -> str:
         """
         инвойс в base64
         """
@@ -60,6 +60,7 @@ class AbstractPaymentSystem(ABC):
         Возвращаем обьект результатов обработки платежа
         так как возможно процесс платежа будет обрабатывать ассинхронно
         """
+        ...
 
     @abstractmethod
     def is_process_payment_result_ready(self) -> bool:
@@ -67,6 +68,7 @@ class AbstractPaymentSystem(ABC):
         Проверяем обработали ли платеж
         проверяем по наличию информации в платеже в поле data
         """
+        ...
 
     @abstractmethod
     def process_request(self) -> None:

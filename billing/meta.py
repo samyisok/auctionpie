@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -58,3 +59,4 @@ class PaymentSystem(models.TextChoices):
     """
 
     DUMMY = "dummy", "Псевдо платежная система"
+    YOOMONEY = settings.YOOMONEY, "Псевдо платежная система"
