@@ -84,3 +84,45 @@ class AbstractPaymentSystem(ABC):
     def is_invoice_avalible(cls) -> bool:
         """ инвойс доступен ли для этой ПС """
         ...
+
+
+class PaymentSystemResult(AbastactPaymentSystemResult):
+    """ результат обработки платежа """
+
+    def __init__(
+        self,
+        payment_system: AbstractPaymentSystem,
+        confirm_url: str,
+        invoice: str,
+        failed: bool,
+        pending: bool,
+    ):
+        self.payment_system: AbstractPaymentSystem = payment_system
+        self.confirm_url: str = confirm_url
+        self.invoice: str = invoice
+        self.failed: bool = failed
+        self.pending: bool = pending
+
+    @property
+    def is_confirm_avalible(self) -> bool:
+        return self.payment_system.is_confirm_avalible()
+
+    @property
+    def is_invoice_avalible(self) -> bool:
+        return self.payment_system.is_invoice_avalible()
+
+    def get_invoice(self) -> str:
+        return self.invoice
+
+    def get_confirm_url(self) -> str:
+        return self.confirm_url
+
+    @property
+    def is_failed(self) -> bool:
+        """ Платеж не успешен """
+        return self.failed
+
+    @property
+    def is_pending(self) -> bool:
+        """ платеж ожидает обновления """
+        return self.pending

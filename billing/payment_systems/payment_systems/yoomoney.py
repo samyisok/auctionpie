@@ -7,6 +7,7 @@ from yookassa import Payment as YookassaPayment
 from billing.payment_systems.payment_system import (
     AbastactPaymentSystemResult,
     AbstractPaymentSystem,
+    PaymentSystemResult,
 )
 
 if TYPE_CHECKING:
@@ -20,48 +21,6 @@ if TYPE_CHECKING:
 YOOMONEY = settings.YOOMONEY
 Configuration.account_id = settings.PAYMENT_SYSTEMS[YOOMONEY]["key"]
 Configuration.secret_key = settings.PAYMENT_SYSTEMS[YOOMONEY]["shop_id"]
-
-
-class YoomoneyPaymentSystemResult(AbastactPaymentSystemResult):
-    """ Yoomoney результат обработки платежа """
-
-    def __init__(
-        self,
-        payment_system: AbstractPaymentSystem,
-        confirm_url: str,
-        invoice: str,
-        failed: bool,
-        pending: bool,
-    ):
-        self.payment_system: AbstractPaymentSystem = payment_system
-        self.confirm_url: str = confirm_url
-        self.invoice: str = invoice
-        self.failed: bool = failed
-        self.pending: bool = pending
-
-    @property
-    def is_confirm_avalible(self) -> bool:
-        return self.payment_system.is_confirm_avalible()
-
-    @property
-    def is_invoice_avalible(self) -> bool:
-        return self.payment_system.is_invoice_avalible()
-
-    def get_invoice(self) -> str:
-        return self.invoice
-
-    def get_confirm_url(self) -> str:
-        return self.confirm_url
-
-    @property
-    def is_failed(self) -> bool:
-        """ Платеж не успешен """
-        return False
-
-    @property
-    def is_pending(self) -> bool:
-        """ dummy всегда готов """
-        return False
 
 
 class YoomoneyPaymentSystem(AbstractPaymentSystem):
@@ -108,7 +67,7 @@ class YoomoneyPaymentSystem(AbstractPaymentSystem):
         invoice = ""
         failed = False
 
-        return YoomoneyPaymentSystemResult(
+        return PaymentSystemResult(
             payment_system=self,
             confirm_url=confirm_url,
             pending=pending,
