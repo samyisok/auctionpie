@@ -127,6 +127,7 @@ def get_product_list(input: PageListInput) -> List:
     return paginator.page(input.page)
 
 
+@catch_product_not_found
 def get_product(input: IdInput) -> Product:
     """
     получаем конкретный продукт
@@ -134,6 +135,7 @@ def get_product(input: IdInput) -> Product:
     return Product.objects.get(id=input.id)
 
 
+@catch_product_not_found
 def get_product_price(input: IdInput) -> Decimal:
     """
     получаем цену продукта
