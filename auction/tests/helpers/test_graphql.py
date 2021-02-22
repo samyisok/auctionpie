@@ -136,6 +136,19 @@ class HelperGraphqlActivateProductTestCase(TestCase):
         self.assertIsInstance(product, Product)
         self.assertEqual(product.status, ProductStatus.ACTIVE)
 
+    def test_activate_product_not_found(self):
+        """ should raise product not found """
+        product_action_input = ProductActionInput(
+            product_id=42, seller=self.seller
+        )
+
+        with self.assertRaisesMessage(
+            GenericException, CodeError.PRODUCT_NOT_FOUND.message
+        ):
+            graphql_helper.activate_product(
+                product_action_input=product_action_input
+            )
+
     def test_activate_product_should_raise_exception(self):
         """ should raise exception if wrong user """
         another_client: Client = Client.objects.create_user(

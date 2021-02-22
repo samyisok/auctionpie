@@ -66,7 +66,12 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
 
 def activate_product(product_action_input: ProductActionInput):
     """ Выставление продукта на аукцион """
-    product: Product = Product.objects.get(id=product_action_input.product_id)
+    try:
+        product: Product = Product.objects.get(
+            id=product_action_input.product_id
+        )
+    except ObjectDoesNotExist:
+        raise CodeError.PRODUCT_NOT_FOUND.exception
 
     if product_action_input.seller != product.seller:
         raise CodeError.WRONG_CLIENT.exception
