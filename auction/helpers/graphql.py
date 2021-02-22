@@ -90,6 +90,7 @@ def activate_product(product_action_input: ProductActionInput):
     return product
 
 
+@catch_product_not_found
 def delete_product(product_action_input: ProductActionInput):
     """ Удаление продукта """
     product: Product = Product.objects.get(id=product_action_input.product_id)
