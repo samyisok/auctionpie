@@ -53,18 +53,19 @@ Test coverage
   billing/__init__.py                                       0      0      0      0   100%
   billing/admin.py                                          4      0      0      0   100%
   billing/helpers/__init__.py                               0      0      0      0   100%
-  billing/helpers/graphql.py                                5      0      0      0   100%
-  billing/meta.py                                          24      0      0      0   100%
+  billing/helpers/graphql.py                               12      3      0      0    75%
+  billing/meta.py                                          26      0      0      0   100%
   billing/models/__init__.py                                3      0      0      0   100%
   billing/models/base.py                                    7      0      0      0   100%
   billing/models/bill.py                                   28      0      0      0   100%
-  billing/models/payment.py                                47     16      2      0    63%
+  billing/models/payment.py                                49     15      2      0    67%
   billing/models/transaction.py                            53      0     10      0   100%
   billing/payment_systems/__init__.py                       0      0      0      0   100%
-  billing/payment_systems/payment_system.py                29      6      0      0    79%
+  billing/payment_systems/payment_system.py                73     26      0      0    64%
   billing/payment_systems/payment_system_factory.py        11      2      0      0    82%
   billing/payment_systems/payment_systems/__init__.py       0      0      0      0   100%
-  billing/payment_systems/payment_systems/dummy.py         27     11      0      0    59%
+  billing/payment_systems/payment_systems/dummy.py         21      8      0      0    62%
+  billing/payment_systems/payment_systems/yoomoney.py      34     34      0      0     0%
   billing/schema.py                                        12      3      0      0    75%
   billing/strategies.py                                    51      0      8      0   100%
   billing/structures/__init__.py                            0      0      0      0   100%
@@ -75,4 +76,4 @@ Test coverage
   core/errors.py                                           28      0      0      0   100%
   core/schema.py                                           17      0      0      0   100%
   ---------------------------------------------------------------------------------------
-  TOTAL                                                   980     79     88     10    91%
+  TOTAL                                                  1063    132     88     10    87%

@@ -37,6 +37,7 @@ class DummyPaymentSystem(AbstractPaymentSystem):
             confirm_url="",
             failed=False,
             pending=False,
+            success=True,
         )
 
     def is_process_payment_result_ready(self) -> bool:

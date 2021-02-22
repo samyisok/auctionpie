@@ -45,6 +45,11 @@ class AbastactPaymentSystemResult(ABC):
         """ платеж еще выполняется """
         ...
 
+    @abstractproperty
+    def is_success(self) -> bool:
+        """ платеж успешный """
+        ...
+
 
 class AbstractPaymentSystem(ABC):
     payment: Payment
@@ -96,12 +101,14 @@ class PaymentSystemResult(AbastactPaymentSystemResult):
         invoice: str,
         failed: bool,
         pending: bool,
+        success: bool,
     ):
         self.payment_system: AbstractPaymentSystem = payment_system
         self.confirm_url: str = confirm_url
         self.invoice: str = invoice
         self.failed: bool = failed
         self.pending: bool = pending
+        self.success: bool = success
 
     @property
     def is_confirm_avalible(self) -> bool:
@@ -126,3 +133,8 @@ class PaymentSystemResult(AbastactPaymentSystemResult):
     def is_pending(self) -> bool:
         """ платеж ожидает обновления """
         return self.pending
+
+    @property
+    def is_success(self) -> bool:
+        """ платеж ожидает обновления """
+        return self.success

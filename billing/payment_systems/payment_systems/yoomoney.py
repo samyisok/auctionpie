@@ -1,3 +1,4 @@
+import json
 from typing import TYPE_CHECKING
 
 from django.conf import settings
@@ -47,7 +48,7 @@ class YoomoneyPaymentSystem(AbstractPaymentSystem):
             }
         )
 
-        self.payment.data = payment.json()
+        self.payment.data = json.loads(payment.json())
         self.payment.save()
 
     def process_request(self) -> None:
@@ -66,6 +67,7 @@ class YoomoneyPaymentSystem(AbstractPaymentSystem):
         confirm_url = json_data["confirmation"]["return_url"]
         invoice = ""
         failed = False
+        success = json_data["status"] == "succeeded"
 
         return PaymentSystemResult(
             payment_system=self,
@@ -73,6 +75,7 @@ class YoomoneyPaymentSystem(AbstractPaymentSystem):
             pending=pending,
             invoice=invoice,
             failed=failed,
+            success=success,
         )
 
     def is_process_payment_result_ready(self) -> bool:
@@ -80,12 +83,12 @@ class YoomoneyPaymentSystem(AbstractPaymentSystem):
         Проверяем обработали ли платеж
         проверяем по наличию информации в платеже в поле data
         """
-        return True
+        return "status" in self.payment.data
 
     @classmethod
     def is_confirm_avalible(cls) -> bool:
-        """ Урл подвтерждения не доступен """
-        return False
+        """ Урл подвтерждения доступен для этой платежной системы """
+        return True
 
     @classmethod
     def is_invoice_avalible(cls) -> bool:
