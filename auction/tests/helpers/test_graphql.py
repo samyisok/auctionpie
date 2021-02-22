@@ -49,6 +49,15 @@ class HelperGraphqlCreateBidTestCase(TestCase):
         self.assertEqual(bid.price, amount)
         mock_post_save.assert_called_once_with()
 
+    def test_create_bid_product_not_found(self):
+        """ should raise product not found """
+        bid_input = BidInput(client=self.client, price=amount, product_id=42)
+
+        with self.assertRaisesMessage(
+            GenericException, CodeError.PRODUCT_NOT_FOUND.message
+        ):
+            graphql_helper.create_bid(bid_input=bid_input)
+
 
 class HelperGraphqlCreateProductTestCase(TestCase):
     """Create product"""

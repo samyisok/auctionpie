@@ -102,6 +102,7 @@ def delete_product(product_action_input: ProductActionInput):
     return product
 
 
+@catch_product_not_found
 def create_bid(bid_input: BidInput) -> Bid:
     """ Выставление новой ставки по товару """
     product = Product.objects.get(id=bid_input.product_id)
