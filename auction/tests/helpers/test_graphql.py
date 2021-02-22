@@ -2,9 +2,9 @@ from datetime import timedelta
 from decimal import Decimal
 from unittest import mock
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.utils import timezone
-from pydantic.errors import ColorError
 
 from auction.helpers import graphql as graphql_helper
 from auction.models import Bid, Client, Product
@@ -261,3 +261,36 @@ class HelperGraphqlUpdateProductTestCase(TestCase):
             GenericException, CodeError.NO_CHANGES_SPECIFIED.message
         ):
             graphql_helper.update_product(product_update_input)
+
+
+class DecoratorCatchProductNotFoundTestCase(TestCase):
+    """ catch excepton """
+
+    def test_catch_product_not_found(self):
+        def func():
+            raise ObjectDoesNotExist("Product matching query does not exist.")
+
+        with self.assertRaisesMessage(
+            GenericException, CodeError.PRODUCT_NOT_FOUND.message
+        ):
+            graphql_helper.catch_product_not_found(func)()
+
+    def test_catch_product_not_found_should_not(self):
+        """ should not catch exception with different describtion """
+
+        def func():
+            raise ObjectDoesNotExist("Bill matching query does not exist.")
+
+        with self.assertRaisesMessage(
+            ObjectDoesNotExist, "Bill matching query does not exist."
+        ):
+            graphql_helper.catch_product_not_found(func)()
+
+    def test_catch_product_not_found_should_not_if_another(self):
+        """ should not catch exception if it another exception """
+
+        def func():
+            raise GenericException("Oops")
+
+        with self.assertRaisesMessage(GenericException, "Oops"):
+            graphql_helper.catch_product_not_found(func)()

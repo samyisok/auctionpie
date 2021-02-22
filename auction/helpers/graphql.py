@@ -1,6 +1,7 @@
 """
 Методы для вызова из graphql
 """
+import functools
 from decimal import Decimal
 from typing import List
 
@@ -17,6 +18,23 @@ from auction.structures.graphql import (
     ProductUpdateInput,
 )
 from core.errors import CodeError
+
+
+def catch_product_not_found(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ObjectDoesNotExist as exc:
+            if (
+                isinstance(exc, ObjectDoesNotExist)
+                and exc.args[0] == "Product matching query does not exist."
+            ):
+                raise CodeError.PRODUCT_NOT_FOUND.exception
+            else:
+                raise exc
+
+    return wrapper
 
 
 def create_new_product(product_input: ProductInput) -> Product:
@@ -36,14 +54,10 @@ def create_new_product(product_input: ProductInput) -> Product:
     return product
 
 
+@catch_product_not_found
 def update_product(product_update_input: ProductUpdateInput) -> Product:
     """ обновление данных по товару """
-    try:
-        product: Product = Product.objects.get(
-            id=product_update_input.product_id
-        )
-    except ObjectDoesNotExist:
-        raise CodeError.PRODUCT_NOT_FOUND.exception
+    product: Product = Product.objects.get(id=product_update_input.product_id)
 
     if product_update_input.seller != product.seller:
         raise CodeError.WRONG_CLIENT.exception
@@ -64,14 +78,10 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
     return product
 
 
+@catch_product_not_found
 def activate_product(product_action_input: ProductActionInput):
     """ Выставление продукта на аукцион """
-    try:
-        product: Product = Product.objects.get(
-            id=product_action_input.product_id
-        )
-    except ObjectDoesNotExist:
-        raise CodeError.PRODUCT_NOT_FOUND.exception
+    product: Product = Product.objects.get(id=product_action_input.product_id)
 
     if product_action_input.seller != product.seller:
         raise CodeError.WRONG_CLIENT.exception
