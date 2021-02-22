@@ -4,6 +4,7 @@ from unittest import mock
 
 from django.test import TestCase
 from django.utils import timezone
+from pydantic.errors import ColorError
 
 from auction.helpers import graphql as graphql_helper
 from auction.models import Bid, Client, Product
@@ -186,6 +187,17 @@ class HelperGraphqlUpdateProductTestCase(TestCase):
         self.assertIsInstance(product, Product)
 
         self.assertDictEqual(updated_product_attributes, new_product_params)
+
+    def test_update_product_not_found(self):
+        """ should raise product not found """
+        product_update_input = ProductUpdateInput(
+            product_id=42, seller=self.seller, **product_params
+        )
+
+        with self.assertRaisesMessage(
+            GenericException, CodeError.PRODUCT_NOT_FOUND.message
+        ):
+            graphql_helper.update_product(product_update_input)
 
     def test_update_product_success_only_desc(self):
         """ update only desc field """

@@ -4,6 +4,7 @@
 from decimal import Decimal
 from typing import List
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 
 from auction.models import Bid, Product
@@ -37,7 +38,12 @@ def create_new_product(product_input: ProductInput) -> Product:
 
 def update_product(product_update_input: ProductUpdateInput) -> Product:
     """ обновление данных по товару """
-    product: Product = Product.objects.get(id=product_update_input.product_id)
+    try:
+        product: Product = Product.objects.get(
+            id=product_update_input.product_id
+        )
+    except ObjectDoesNotExist:
+        raise CodeError.PRODUCT_NOT_FOUND.exception
 
     if product_update_input.seller != product.seller:
         raise CodeError.WRONG_CLIENT.exception
