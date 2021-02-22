@@ -21,6 +21,7 @@ class CodeError(Enum):
     AMOUNT_SHOULD_BE_POSITIVE = "Amount param should be postive"
     NOT_ENOUGH_BALANCE = "Not enough amount on balance"
     TRANSACTION_NOT_CREATED = "Transaction was not created"
+    PAYMENT_NOT_FOUND = "Payment not found"
 
     def __init__(self, message: str) -> None:
         self.message = message

@@ -4,8 +4,11 @@
 from decimal import Decimal
 from typing import Dict, List
 
-from billing.models import Transaction
-from billing.structures.graphql import ClientInput
+from django.core.exceptions import ObjectDoesNotExist
+
+from billing.models import Payment, Transaction
+from billing.structures.graphql import ClientInput, PaymentInfoInput
+from core.errors import CodeError
 
 
 def get_balance(input: ClientInput) -> Decimal:
@@ -29,6 +32,14 @@ def create_payment(input: ClientInput, payment_system: str, amount: str) -> int:
     ...
 
 
-def get_payment(input: ClientInput, payment_id: int) -> Dict:
+def get_payment_info(input: PaymentInfoInput) -> Dict:
     """ возвращаем статус платежа и confirm_url """
+    try:
+        payment: Payment = Payment.objects.get(
+            id=input.payment_id, client=input.client
+        )
+    except ObjectDoesNotExist:
+        raise CodeError.PAYMENT_NOT_FOUND.exception
+
+    return payment.get_payment_status_info()
     ...

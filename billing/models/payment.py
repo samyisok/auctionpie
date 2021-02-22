@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
 if TYPE_CHECKING:
     from billing.payment_systems.payment_system import AbstractPaymentSystem
@@ -119,6 +119,23 @@ class Payment(ModelAbstract):
         устанавлиаем статус как cancelled
         """
         pass
+
+    def get_payment_status_info(self) -> Dict:
+        """
+        Информация о статусе платежа
+        """
+        payment_result = (
+            self.payment_system_instance.get_process_payment_result()
+        )
+
+        return {
+            "status": self.status,
+            "result_avalible": self.payment_system_instance.is_process_payment_result_ready(),
+            "is_confirm_url": payment_result.is_confirm_avalible,
+            "is_invoice": payment_result.is_invoice_avalible,
+            "confirm_url": payment_result.get_confirm_url(),
+            "invoice": payment_result.get_invoice(),
+        }
 
     def create_bill(self) -> Bill:
         """
