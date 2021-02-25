@@ -33,12 +33,14 @@ def get_payment_systems(input: ClientInput) -> List[str]:
 
 def create_payment(input: CreatePaymentInput) -> int:
     """ создаем платеж для конкретного пользователя, получаем id платежа """
-    payment = Payment.objects.create(
+    payment: Payment = Payment.objects.create(
         client=input.client,
         expected_amount=input.amount,
         payment_system=input.payment_system,
         description="Предоплата",
     )
+
+    payment.async_process()
 
     return payment.id
 

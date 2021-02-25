@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
 
@@ -54,7 +55,8 @@ class HelperCreatePayment(TestCase):
     def setUp(self) -> None:
         self.client = Client.objects.create_user(email, password)
 
-    def test_create_payment(self):
+    @patch("billing.models.Payment.async_process")
+    def test_create_payment(self, mock_async_process: MagicMock):
         """ should create payment """
 
         payment_system = "yoomoney"
@@ -65,6 +67,8 @@ class HelperCreatePayment(TestCase):
 
         payment_id = create_payment(input=input)
         payment = Payment.objects.get(id=payment_id)
+
+        mock_async_process.assert_called_once_with()
 
         self.assertEqual(payment.expected_amount, amount)
         self.assertEqual(payment.payment_system, payment_system)

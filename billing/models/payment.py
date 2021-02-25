@@ -15,6 +15,7 @@ from billing.meta import BillType, PaymentStatus, PaymentSystem
 from billing.models import Bill
 from billing.models.base import ModelAbstract
 from billing.payment_systems.payment_system_factory import PaymentSystemFactory
+from billing.tasks import payment_process
 from core.errors import CodeError
 
 
@@ -68,7 +69,7 @@ class Payment(ModelAbstract):
     def payment_system_instance(self) -> AbstractPaymentSystem:
         return PaymentSystemFactory.get_payment_system(self)
 
-    def process_payment(self) -> None:
+    def process(self) -> None:
         """
         Начать обрабатывать платеж
 
@@ -79,6 +80,10 @@ class Payment(ModelAbstract):
         """
 
         self.payment_system_instance.process_payment()
+
+    def async_process(self) -> None:
+        """ ставим таску на обработку платежа """
+        payment_process.delay()
 
     def process_request(self):
         """
