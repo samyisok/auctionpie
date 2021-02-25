@@ -7,7 +7,11 @@ from typing import Dict, List
 from django.core.exceptions import ObjectDoesNotExist
 
 from billing.models import Payment, Transaction
-from billing.structures.graphql import ClientInput, PaymentInfoInput
+from billing.structures.graphql import (
+    ClientInput,
+    CreatePaymentInput,
+    PaymentInfoInput,
+)
 from core.errors import CodeError
 
 
@@ -27,9 +31,16 @@ def get_payment_systems(input: ClientInput) -> List[str]:
     ...
 
 
-def create_payment(input: ClientInput, payment_system: str, amount: str) -> int:
+def create_payment(input: CreatePaymentInput) -> int:
     """ создаем платеж для конкретного пользователя, получаем id платежа """
-    ...
+    payment = Payment.objects.create(
+        client=input.client,
+        expected_amount=input.amount,
+        payment_system=input.payment_system,
+        description="Предоплата",
+    )
+
+    return payment.id
 
 
 def get_payment_info(input: PaymentInfoInput) -> Dict:
@@ -42,4 +53,3 @@ def get_payment_info(input: PaymentInfoInput) -> Dict:
         raise CodeError.PAYMENT_NOT_FOUND.exception
 
     return payment.get_payment_status_info()
-    ...

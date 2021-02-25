@@ -3,10 +3,10 @@ from decimal import Decimal
 from django.test import TestCase
 
 from auction.models import Client
-from billing.helpers.graphql import get_balance
+from billing.helpers.graphql import create_payment, get_balance
 from billing.meta import BillStatus, BillType
-from billing.models import Bill, Transaction
-from billing.structures.graphql import ClientInput
+from billing.models import Bill, Payment, Transaction
+from billing.structures.graphql import ClientInput, CreatePaymentInput
 
 email = "emailfortest@test.ru"
 password = "password"
@@ -46,3 +46,27 @@ class HelperBalanceTestCase(TestCase, PrecreateMixin):
         self.precreate_data()
         client_input = ClientInput(client=self.client)
         self.assertEqual(get_balance(client_input), Decimal(amount))
+
+
+class HelperCreatePayment(TestCase):
+    """ helper create payment """
+
+    def setUp(self) -> None:
+        self.client = Client.objects.create_user(email, password)
+
+    def test_create_payment(self):
+        """ should create payment """
+
+        payment_system = "yoomoney"
+
+        input = CreatePaymentInput(
+            client=self.client, amount=amount, payment_system=payment_system
+        )
+
+        payment_id = create_payment(input=input)
+        payment = Payment.objects.get(id=payment_id)
+
+        self.assertEqual(payment.expected_amount, amount)
+        self.assertEqual(payment.payment_system, payment_system)
+        self.assertEqual(payment.description, "Предоплата")
+        self.assertEqual(payment.client, self.client)

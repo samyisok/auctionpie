@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from pydantic import BaseModel
 
 from auction.models import Client
@@ -18,3 +20,10 @@ class PaymentInfoInput(ClientInput):
     """ payment info """
 
     payment_id: int
+
+
+class CreatePaymentInput(ClientInput):
+    """ payment info """
+
+    payment_system: str
+    amount: Decimal

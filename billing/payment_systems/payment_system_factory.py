@@ -7,13 +7,19 @@ if TYPE_CHECKING:
 
 from billing.meta import PaymentSystem
 from billing.payment_systems.payment_system import AbstractPaymentSystem
-from billing.payment_systems.payment_systems.dummy import DummyPaymentSystem
+from billing.payment_systems.payment_systems import (
+    DummyPaymentSystem,
+    YoomoneyPaymentSystem,
+)
 
 
 class PaymentSystemFactory:
-    mapping = {PaymentSystem.DUMMY: DummyPaymentSystem}
+    mapping = {
+        PaymentSystem.DUMMY: DummyPaymentSystem,
+        PaymentSystem.YOOMONEY: YoomoneyPaymentSystem,
+    }
 
     @classmethod
     def get_payment_system(cls, payment: Payment) -> AbstractPaymentSystem:
-        payment_system_class = cls.mapping[Payment.payment_system]
+        payment_system_class = cls.mapping[payment.payment_system]
         return payment_system_class(payment)
