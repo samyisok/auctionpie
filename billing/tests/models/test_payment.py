@@ -1,5 +1,5 @@
 from decimal import Decimal
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from django.test import TestCase
 
@@ -27,3 +27,15 @@ class PaymentModelTestCase(TestCase):
         """ should call delay """
         self.payment.async_process()
         mock_delay.assert_called_once_with()
+
+    @patch.object(
+        Payment,
+        "payment_system_instance",
+        new_callable=PropertyMock(
+            return_value=MagicMock(process_payment=MagicMock())
+        ),
+    )
+    def test_process(self, mock_psi: MagicMock):
+        """ should call process_payment """
+        self.payment.process()
+        mock_psi.process_payment.assert_called_once_with()
