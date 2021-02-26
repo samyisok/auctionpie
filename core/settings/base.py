@@ -136,3 +136,39 @@ STATIC_URL = "/static/"
 
 AUTH_USER_MODEL = "auction.Client"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[%(asctime)s] %(levelname)s [%(module)s:%(filename)s:%(lineno)s] %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": LOG_LEVEL,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": LOG_LEVEL,
+        },
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": LOG_LEVEL,
+        },
+        "django.security": {
+            "handlers": ["console"],
+            "level": LOG_LEVEL,
+        },
+    },
+}
