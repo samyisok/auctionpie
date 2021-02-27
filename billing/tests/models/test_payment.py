@@ -14,6 +14,16 @@ class PaymentModelTestCase(TestCase):
     """Payment"""
 
     def setUp(self):
+        psi = MagicMock(
+            process_payment=MagicMock(), process_request=MagicMock()
+        )
+
+        self.mock_psi: MagicMock = patch.object(
+            Payment,
+            "payment_system_instance",
+            new_callable=PropertyMock(return_value=psi),
+        ).start()
+
         self.client: Client = Client.objects.create_user(email, "password")
         self.payment: Payment = Payment.objects.create(
             client=self.client,
@@ -28,14 +38,12 @@ class PaymentModelTestCase(TestCase):
         self.payment.async_process()
         mock_delay.assert_called_once_with()
 
-    @patch.object(
-        Payment,
-        "payment_system_instance",
-        new_callable=PropertyMock(
-            return_value=MagicMock(process_payment=MagicMock())
-        ),
-    )
-    def test_process(self, mock_psi: MagicMock):
+    def test_process(self):
         """ should call process_payment """
         self.payment.process()
-        mock_psi.process_payment.assert_called_once_with()
+        self.mock_psi.process_payment.assert_called_once_with()
+
+    def test_process_request(self):
+        """ should call process_request """
+        self.payment.process_request()
+        self.mock_psi.process_request.assert_called_once_with()
