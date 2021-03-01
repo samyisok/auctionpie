@@ -53,7 +53,7 @@ class Payment(ModelAbstract):
     )
     payed_date = models.DateTimeField("Время оплаты", null=True)
     req_date = models.DateTimeField("Время оплаты", null=True)
-    data = models.JSONField("Информация от платежной системы", null=True)
+    data = models.JSONField("Информация от платежной системы", null=True)  # type: ignore
     bill = models.ForeignKey(
         "billing.Bill",
         verbose_name="Счет завершения оплаты",
