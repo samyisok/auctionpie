@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from decimal import Decimal
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, List
 
 if TYPE_CHECKING:
     from billing.payment_systems.payment_system import AbstractPaymentSystem
@@ -95,6 +95,10 @@ class Payment(ModelAbstract):
 
         self.payment_system_instance.process_request()
 
+    @property
+    def statuses_allowed_to_be_payed(self) -> List:
+        return [PaymentStatus.NOT_PAYED, PaymentStatus.PENDING]
+
     def set_payed(self, amount: Decimal) -> None:
         """
         Оплачиваем платеж
@@ -102,7 +106,7 @@ class Payment(ModelAbstract):
         Ставим статус то что платеж оплачен.
         Создаем счет на пополнение баланса.
         """
-        if self.status not in [PaymentStatus.NOT_PAYED, PaymentStatus.PENDING]:
+        if self.status not in self.statuses_allowed_to_be_payed:
             raise CodeError.WRONG_STATUS.exception
 
         self.status = PaymentStatus.PAYED
