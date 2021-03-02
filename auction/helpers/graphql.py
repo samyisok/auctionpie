@@ -3,7 +3,6 @@
 """
 import functools
 from decimal import Decimal
-from typing import List
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -19,10 +18,17 @@ from auction.structures.graphql import (
 )
 from core.errors import CodeError
 
+from typing import Callable, Any, Dict, Union, TYPE_CHECKING, Optional
 
-def catch_product_not_found(func):
+if TYPE_CHECKING:
+    from datetime import datetime
+    from django.core.paginator import Page
+    from django.db.models import Manager
+
+
+def catch_product_not_found(func: Callable[..., Any]) -> Callable[..., Any]:
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
             return func(*args, **kwargs)
         except ObjectDoesNotExist as exc:
@@ -62,7 +68,7 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
     if product_update_input.seller != product.seller:
         raise CodeError.WRONG_CLIENT.exception
 
-    changes: dict = {
+    changes: Dict[str, Union[Optional[str], Optional[datetime]]] = {
         key: value
         for (key, value) in product_update_input.dict().items()
         if key not in ["seller", "product_id"] and value is not None
@@ -79,7 +85,7 @@ def update_product(product_update_input: ProductUpdateInput) -> Product:
 
 
 @catch_product_not_found
-def activate_product(product_action_input: ProductActionInput):
+def activate_product(product_action_input: ProductActionInput) -> Product:
     """ Выставление продукта на аукцион """
     product: Product = Product.objects.get(id=product_action_input.product_id)
 
@@ -91,7 +97,7 @@ def activate_product(product_action_input: ProductActionInput):
 
 
 @catch_product_not_found
-def delete_product(product_action_input: ProductActionInput):
+def delete_product(product_action_input: ProductActionInput) -> Product:
     """ Удаление продукта """
     product: Product = Product.objects.get(id=product_action_input.product_id)
 
@@ -118,11 +124,11 @@ def create_bid(bid_input: BidInput) -> Bid:
     return bid
 
 
-def get_product_list(input: PageListInput) -> List:
+def get_product_list(input: PageListInput) -> Page:
     """
     получаем список продуктов на аукционе
     """
-    products: List[Product] = Product.objects.all().order_by("id")
+    products: Manager[Product] = Product.objects.all().order_by("id")
     paginator: Paginator = Paginator(products, input.page_size)
     return paginator.page(input.page)
 
