@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Union
 
 from django.conf import settings
 from yookassa import Configuration
@@ -12,22 +14,25 @@ from billing.payment_systems.payment_system import (
 )
 
 if TYPE_CHECKING:
+    from billing.models import Payment
     from yookassa.domain.response import (
         PaymentResponse as YoomoneyPaymentResponse,
     )
 
-    from billing.models import Payment
 
-
-YOOMONEY = settings.YOOMONEY
-Configuration.account_id = settings.PAYMENT_SYSTEMS[YOOMONEY]["key"]
-Configuration.secret_key = settings.PAYMENT_SYSTEMS[YOOMONEY]["shop_id"]
+YOOMONEY: str = settings.YOOMONEY
+config_payment_systems: Dict[
+    str, Dict[str, Union[str, bool, None]]
+] = settings.PAYMENT_SYSTEMS
+Configuration.account_id = config_payment_systems[YOOMONEY]["key"]
+Configuration.secret_key = config_payment_systems[YOOMONEY]["shop_id"]
+return_url = config_payment_systems[YOOMONEY]["return_url"]
 
 
 class YoomoneyPaymentSystem(AbstractPaymentSystem):
     """ Yoomoney платежная система """
 
-    def __init__(self, payment):
+    def __init__(self, payment: Payment) -> None:
         self.payment: Payment = payment
 
     def process_payment(self) -> None:
@@ -38,12 +43,7 @@ class YoomoneyPaymentSystem(AbstractPaymentSystem):
                     "currency": "RUB",
                 },
                 "payment_method_data": {"type": "bank_card"},
-                "confirmation": {
-                    "type": "redirect",
-                    "return_url": settings.PAYMENT_SYSTEMS[YOOMONEY][
-                        "return_url"
-                    ],
-                },
+                "confirmation": {"type": "redirect", "return_url": return_url},
                 "description": self.payment.description,
             }
         )

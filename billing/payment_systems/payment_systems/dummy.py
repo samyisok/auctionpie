@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class DummyPaymentSystem(AbstractPaymentSystem):
     """ Псевдо платежная система """
 
-    def __init__(self, payment):
+    def __init__(self, payment: Payment) -> None:
         self.payment: Payment = payment
 
     def process_payment(self) -> None:
