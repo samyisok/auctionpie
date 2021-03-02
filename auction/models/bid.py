@@ -1,5 +1,6 @@
 import logging
 from decimal import Decimal
+from typing import Iterable, Optional
 
 from django.db import models
 
@@ -36,7 +37,7 @@ class Bid(models.Model):
     class Meta:
         indexes = [models.Index(fields=["price"])]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.product.name}: {self.price}"
 
     @classmethod
@@ -49,19 +50,25 @@ class Bid(models.Model):
 
         return bid is None
 
-    def clean(self):
+    def clean(self) -> None:
         super().clean()
         if not Bid.is_possible_to_place_bid(
             product=self.product, price=self.price
         ):
             raise CodeError.ALREADY_HAS_HIGHER_BID.exception
 
-    def save(self, *args, **kwargs):
+    def save(
+        self,
+        force_insert: bool = False,
+        force_update: bool = False,
+        using: Optional[str] = None,
+        update_fields: Optional[Iterable[str]] = None,
+    ) -> None:
         """ проверки перед сохранением ставки """
         self.full_clean()
-        return super().save(*args, **kwargs)
+        return super().save(force_insert, force_update, using, update_fields)
 
-    def post_save(self):
+    def post_save(self) -> None:
         """ будем вызывать из хелпера отдельно """
         try:
             self.product.bid_posthook()
