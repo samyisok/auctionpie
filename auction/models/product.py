@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from decimal import Decimal
-from typing import TYPE_CHECKING, Optional, Iterable
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from django.apps import apps
 from django.core.exceptions import ValidationError

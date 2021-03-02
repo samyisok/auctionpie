@@ -1,4 +1,5 @@
-from typing import List
+from decimal import Decimal
+from typing import Dict, List
 
 from django.conf import settings
 from django.db import models
@@ -30,24 +31,24 @@ class Deal(ModelAbstract):
     )
     bills = models.ManyToManyField(Bill, through="DealBill")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.product.name}: {self.amount}"
 
-    def get_commission(self):
+    def get_commission(self) -> Decimal:
         """По бизнес логике, клиент оплачивает коммиссионные за сервис"""
 
         # TODO инжектить отдельно расчет коммиссии в зависимости
         # от типа пользователя(добавить прем юзеров)
-        return (
-            self.amount
-            * (
-                settings.COMMISSION_PART[self.product.seller.company.id]
-                + self.product.seller.company.vat
-            )
-            / 100
-        )
 
-    def get_proceeds(self):
+        vat: int = self.product.seller.company.vat
+        company_id: int = self.product.seller.company.id
+        commission_part: Dict[int, int] = settings.COMMISSION_PART
+        commission: int = commission_part[company_id]
+        total_commission: int = commission + vat
+
+        return self.amount * total_commission / 100
+
+    def get_proceeds(self) -> Decimal:
         """Выручка, это цена продажи за вычетом коммиссионных"""
         return self.amount - self.get_commission()
 
@@ -119,5 +120,5 @@ class DealBill(ModelAbstract):
         Bill, verbose_name="Счет", on_delete=models.CASCADE
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.deal} - {self.bill}"
