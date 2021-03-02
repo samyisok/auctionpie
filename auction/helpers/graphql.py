@@ -98,7 +98,7 @@ def delete_product(product_action_input: ProductActionInput):
     if product_action_input.seller != product.seller:
         raise CodeError.WRONG_CLIENT.exception
 
-    product.delete()
+    product.delete_product()
     return product
 
 

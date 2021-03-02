@@ -279,9 +279,9 @@ class ModelsProductTestCase(TestCase):
             self.product.send_email(type=None)
 
     @mock.patch("auction.models.Product.save")
-    def test_delete(self, mock_save):
+    def test_delete_product(self, mock_save):
         """ should change status to deleted """
-        self.product.delete()
+        self.product.delete_product()
         self.assertEqual(self.product.status, ProductStatus.DELETED)
         mock_save.assert_called_once_with()
 
@@ -291,7 +291,7 @@ class ModelsProductTestCase(TestCase):
         with self.assertRaisesMessage(
             GenericException, CodeError.ALREADY_DELETED.message
         ):
-            self.product.delete()
+            self.product.delete_product()
 
     def test_delete_raise_solded(self):
         """ should raise exception already solded """
@@ -299,7 +299,7 @@ class ModelsProductTestCase(TestCase):
         with self.assertRaisesMessage(
             GenericException, CodeError.ALREADY_SOLDED.message
         ):
-            self.product.delete()
+            self.product.delete_product()
 
     @mock.patch("auction.models.product.product_try_to_make_a_deal.apply_async")
     def test_activate(self, mock_apply_deal):

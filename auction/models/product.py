@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from decimal import Decimal
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Iterable
 
 from django.apps import apps
 from django.core.exceptions import ValidationError
@@ -66,10 +66,10 @@ class Product(models.Model):
     cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
     mdate = models.DateTimeField(auto_now=True, auto_now_add=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def clean(self):
+    def clean(self) -> None:
         """ валидация полей """
 
         active_statuses = [
@@ -85,10 +85,16 @@ class Product(models.Model):
 
         return super().clean()
 
-    def save(self, *args, **kwargs):
+    def save(
+        self,
+        force_insert: bool = False,
+        force_update: bool = False,
+        using: Optional[str] = None,
+        update_fields: Optional[Iterable[str]] = None,
+    ) -> None:
         """ проверки перед сохранением товара"""
         self.full_clean()
-        return super().save(*args, **kwargs)
+        return super().save(force_insert, force_update, using, update_fields)
 
     def get_final_bid(self) -> Optional[Bid]:
         """
@@ -191,7 +197,7 @@ class Product(models.Model):
         """ ставим задачу на отсылку письма """
         product_send_email.delay(product_id=self.id, type=type)
 
-    def delete(self) -> None:
+    def delete_product(self) -> None:
         """ клиент ставит статус удаленный продукт """
 
         if self.status == ProductStatus.DELETED:
