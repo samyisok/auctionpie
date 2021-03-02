@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 
 from django.apps import apps
 from django.db import models
@@ -13,6 +13,7 @@ from billing.tasks import bill_activate
 
 if TYPE_CHECKING:
     from billing.models import Transaction
+    from billing.strategies import BillStrategy
 
 
 class Bill(ModelAbstract):
@@ -44,7 +45,7 @@ class Bill(ModelAbstract):
 
     def activate(self) -> Bill:
         """ Метод активации счета, в момент активации проводим транзакцию по балансу """
-        strategy = BillStrategyFactory.get_strategy(self)
+        strategy: BillStrategy = BillStrategyFactory.get_strategy(self)
         return strategy.activate()
 
     def async_activate(self) -> None:
@@ -53,14 +54,18 @@ class Bill(ModelAbstract):
 
     def create_transaction_deposit(self) -> Transaction:
         """ создание пополнение в балансе """
-        transaction = apps.get_model("billing", "Transaction")
+        transaction: Type[Transaction] = apps.get_model(
+            "billing", "Transaction"
+        )
         return transaction.deposit(
             client=self.client, bill=self, amount=self.amount
         )
 
     def create_transaction_expense(self) -> Transaction:
         """ создание списание в балансе """
-        transaction = apps.get_model("billing", "Transaction")
+        transaction: Type[Transaction] = apps.get_model(
+            "billing", "Transaction"
+        )
         return transaction.expense(
             client=self.client, bill=self, amount=self.amount
         )

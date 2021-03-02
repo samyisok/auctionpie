@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from billing.models import Bill
@@ -47,7 +47,7 @@ class Transaction(models.Model):
         auto_now_add=False,
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"#{self.id} {self.tnx_type}: {self.amount}({self.client})"
 
     @classmethod
@@ -56,7 +56,7 @@ class Transaction(models.Model):
         client: Client,
         bill: Bill,
         amount: Decimal,
-        comment: str = None,
+        comment: Optional[str] = None,
     ) -> Transaction:
         """
         Создание депозита
@@ -82,7 +82,7 @@ class Transaction(models.Model):
         client: Client,
         bill: Bill,
         amount: Decimal,
-        comment: str = None,
+        comment: Optional[str] = None,
     ) -> Transaction:
         """
         Создание списания
@@ -108,7 +108,7 @@ class Transaction(models.Model):
         client: Client,
         bill: Bill,
         amount: Decimal,
-        comment: str = None,
+        comment: Optional[str] = None,
     ) -> Transaction:
         """
         Вывод средств
@@ -137,7 +137,7 @@ class Transaction(models.Model):
         client: Client,
         bill: Bill,
         amount: Decimal,
-        comment: str = None,
+        comment: Optional[str] = None,
     ) -> Transaction:
         """
         создание отмены

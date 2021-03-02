@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from decimal import Decimal
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Union
 
 if TYPE_CHECKING:
     from billing.payment_systems.payment_system import AbstractPaymentSystem
@@ -85,7 +85,7 @@ class Payment(ModelAbstract):
         """ ставим таску на обработку платежа """
         payment_process.delay()
 
-    def process_request(self):
+    def process_request(self) -> None:
         """
         Обработать внешний реквест от платежной системы.
 
@@ -96,7 +96,7 @@ class Payment(ModelAbstract):
         self.payment_system_instance.process_request()
 
     @property
-    def statuses_allowed_to_be_payed(self) -> List:
+    def statuses_allowed_to_be_payed(self) -> List[str]:
         return [PaymentStatus.NOT_PAYED, PaymentStatus.PENDING]
 
     def set_payed(self, amount: Decimal) -> None:
@@ -116,20 +116,20 @@ class Payment(ModelAbstract):
         self.save()
         self.create_bill()
 
-    def set_failed(self):
+    def set_failed(self) -> None:
         """
         устанавливает статус failed когда получаем ошибку от ПС
         уведомляем пользователя
         """
         pass
 
-    def set_cancelled(self):
+    def set_cancelled(self) -> None:
         """
         устанавлиаем статус как cancelled
         """
         pass
 
-    def get_payment_status_info(self) -> Dict:
+    def get_payment_status_info(self) -> Dict[str, Union[str, bool]]:
         """
         Информация о статусе платежа
         """

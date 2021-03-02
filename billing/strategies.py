@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from billing.models import Bill, Transaction
 
-from typing import Optional, Tuple
+from typing import Optional
 
 from billing.meta import BillStatus, BillType
 from core.errors import CodeError
@@ -16,7 +16,7 @@ class BillStrategy:
     Базовый Класс стратегий счетов
     """
 
-    bill_type: Tuple[str, str]
+    bill_type: str
     bill: Bill
     transaction: Optional[Transaction]
 
@@ -72,25 +72,25 @@ class BillStrategyExpense(BillStrategy):
 class BillStrategyPrepay(BillStrategyDeposit):
     """Стратегия предоплаты"""
 
-    bill_type = BillType.PREPAY
+    bill_type: str = BillType.PREPAY.value
 
 
 class BillStrategySell(BillStrategyExpense):
     """Стратегия реализации"""
 
-    bill_type = BillType.SELL
+    bill_type: str = BillType.SELL.value
 
 
 class BillStrategyCommission(BillStrategyExpense):
     """Стратегия коммиссионых"""
 
-    bill_type = BillType.COMMISSION
+    bill_type: str = BillType.COMMISSION.value
 
 
 class BillStrategyProceeds(BillStrategyDeposit):
     """Стратегия выручки"""
 
-    bill_type = BillType.PROCEEDS
+    bill_type: str = BillType.PROCEEDS.value
 
 
 class BillStrategyFactory:
@@ -104,7 +104,7 @@ class BillStrategyFactory:
     ]
 
     @classmethod
-    def get_strategy(cls, bill):
+    def get_strategy(cls, bill: Bill) -> BillStrategy:
         """Получаем нужную стратегию"""
         for strategy_class in cls.strategies:
             # стратегия подходит под счет
