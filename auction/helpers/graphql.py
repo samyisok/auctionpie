@@ -3,9 +3,10 @@
 """
 import functools
 from decimal import Decimal
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Union
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator
+from django.core.paginator import Page, Paginator
 
 from auction.models import Bid, Product
 from auction.structures.graphql import (
@@ -18,11 +19,9 @@ from auction.structures.graphql import (
 )
 from core.errors import CodeError
 
-from typing import Callable, Any, Dict, Union, TYPE_CHECKING, Optional
-
 if TYPE_CHECKING:
     from datetime import datetime
-    from django.core.paginator import Page
+
     from django.db.models import Manager
 
 

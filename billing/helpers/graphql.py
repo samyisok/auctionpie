@@ -2,7 +2,7 @@
 Методы для вызова из graphql
 """
 from decimal import Decimal
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -45,7 +45,7 @@ def create_payment(input: CreatePaymentInput) -> int:
     return payment.id
 
 
-def get_payment_info(input: PaymentInfoInput) -> Dict:
+def get_payment_info(input: PaymentInfoInput) -> Dict[str, Union[str, bool]]:
     """ возвращаем статус платежа и confirm_url """
     try:
         payment: Payment = Payment.objects.get(
