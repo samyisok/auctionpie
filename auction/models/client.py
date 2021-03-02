@@ -4,12 +4,13 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from typing import Optional, Any
 
 from auction.models.company import Company
 
 
-class ClientManager(BaseUserManager):
-    def create_user(self, email, password=None):
+class ClientManager(BaseUserManager):  # type: ignore #django-stubs/pull/360
+    def create_user(self, email: str, password: str) -> "Client":
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -17,7 +18,7 @@ class ClientManager(BaseUserManager):
         if not email:
             raise ValueError("Users must have an email address")
 
-        client = self.model(
+        client: "Client" = self.model(
             email=self.normalize_email(email),
         )
 
@@ -25,7 +26,7 @@ class ClientManager(BaseUserManager):
         client.save(using=self._db)
         return client
 
-    def create_superuser(self, email, password=None):
+    def create_superuser(self, email: str, password: str) -> "Client":
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
@@ -39,7 +40,7 @@ class ClientManager(BaseUserManager):
         return client
 
     @classmethod
-    def normalize_email(cls, email):
+    def normalize_email(cls, email: Optional[str] = None) -> str:
         """
         Normalize the email address by lowercasing the domain part of it.
         """
@@ -82,35 +83,37 @@ class AbstractClient(AbstractBaseUser):
         verbose_name_plural = _("clients")
         abstract = True
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.email
 
-    def clean(self):
+    def clean(self) -> None:
         super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)
 
-    def email_user(self, subject, message, from_email=None, **kwargs) -> int:
+    def email_user(
+        self, subject: str, message: str, from_email: Optional[str] = None
+    ) -> int:
         """Send an email to this user."""
-        send_mail(subject, message, from_email, [self.email], **kwargs)
+        return send_mail(subject, message, from_email, [self.email])
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, perm: Any, obj: Optional[Any] = None) -> bool:
         "Does the user have a specific permission?"
         # Simplest possible answer: Yes, always
         return self.is_admin
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, app_label: Any) -> bool:
         "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
         return self.is_admin
 
     @property
-    def is_staff(self):
+    def is_staff(self) -> bool:
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
     @property
-    def is_superuser(self):
+    def is_superuser(self) -> bool:
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
@@ -124,7 +127,7 @@ class FaceTypes(models.TextChoices):
 
 
 class Client(AbstractClient):
-    email = models.CharField(max_length=128, unique=True)
+    email = models.EmailField(max_length=128, unique=True)
     password = models.CharField(max_length=128)
     cdate = models.DateTimeField(auto_now=False, auto_now_add=True)
     mdate = models.DateTimeField(auto_now=True, auto_now_add=False)
@@ -138,5 +141,5 @@ class Client(AbstractClient):
     last_login = models.DateTimeField(blank=True, null=True)
 
     @property
-    def vat(self):
+    def vat(self) -> int:
         return self.company.vat
