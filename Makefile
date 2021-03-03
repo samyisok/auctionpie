@@ -7,6 +7,7 @@ run:
 	docker-compose up --remove-orphans -d
 
 build:
+	touch env.django.secret
 	docker-compose up --build
 
 test:

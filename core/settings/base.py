@@ -137,7 +137,7 @@ STATIC_URL = "/static/"
 AUTH_USER_MODEL = "auction.Client"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
+LOG_LEVEL = os.environ.get("LOG_LEVEL") or "INFO"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
