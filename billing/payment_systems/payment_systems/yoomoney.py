@@ -14,10 +14,11 @@ from billing.payment_systems.payment_system import (
 )
 
 if TYPE_CHECKING:
-    from billing.models import Payment
     from yookassa.domain.response import (
         PaymentResponse as YoomoneyPaymentResponse,
     )
+
+    from billing.models import Payment
 
 
 YOOMONEY: str = settings.YOOMONEY
